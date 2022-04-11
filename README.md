@@ -7,11 +7,11 @@
 
 Trimothy is a small library that expands on the limited String- and slice-trimming capabilities provided by the standard library.
 
-If any of these methods happened to be introduced into `stable` rust, they will be removed from here.
+If any of these methods happened to be introduced into stable Rust in the future, they will simply be removed from here.
 
 
 
-### `TrimSlice`
+### TrimSlice
 
 This trait adds the following basic trimming capabilities to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`, similar to those enjoyed by strings.
 
@@ -22,7 +22,7 @@ This trait adds the following basic trimming capabilities to `&[u8]`, `Vec<u8>`,
 | `trim_end` | Trim trailing (ASCII) whitespace. |
 
 
-### `TrimSliceMatches`
+### TrimSliceMatches
 
 This trait adds the arbitrary, match-based trimming methods to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`:
 
@@ -33,26 +33,26 @@ This trait adds the arbitrary, match-based trimming methods to `&[u8]`, `Vec<u8>
 | `trim_end_matches` | Trim arbitrary trailing bytes via callback. |
 
 
-### `TrimMut`
+### TrimMut
 
 This trait brings _mutable_ trimming support to `String`, `Vec<u8>`, and `Box<[u8]>`.
 
 | Method | Description |
 | ------ | ----------- |
-| `trim_mut` | Trim leading and trailing (ASCII) whitespace. |
-| `trim_start_mut` | Trim leading (ASCII) whitespace. |
-| `trim_end_mut` | Trim trailing (ASCII) whitespace. |
+| `trim_mut` | Trim leading and trailing whitespace (mutably). |
+| `trim_start_mut` | Trim leading whitespace (mutably). |
+| `trim_end_mut` | Trim trailing whitespace (mutably). |
 
 
-### `TrimMatchesMut`
+### TrimMatchesMut
 
 This trait brings _mutable_ match-based trimming `String`, `Vec<u8>`, and `Box<[u8]>`.
 
 | Method | Description |
 | ------ | ----------- |
-| `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback. |
-| `trim_start_matches_mut` | Trim arbitrary leading bytes via callback. |
-| `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback. |
+| `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback (mutably). |
+| `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
+| `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
 
 
 

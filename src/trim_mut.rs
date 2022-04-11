@@ -30,9 +30,9 @@ use core::intrinsics::copy;
 /// The trait methods included are:
 /// | Method | Description |
 /// | ------ | ----------- |
-/// | `trim_mut` | Trim leading and trailing (ASCII) whitespace. |
-/// | `trim_start_mut` | Trim leading (ASCII) whitespace. |
-/// | `trim_end_mut` | Trim trailing (ASCII) whitespace. |
+/// | `trim_mut` | Trim leading and trailing whitespace (mutably). |
+/// | `trim_start_mut` | Trim leading whitespace (mutably). |
+/// | `trim_end_mut` | Trim trailing whitespace (mutably). |
 ///
 /// **Note:** these behaviors of these methods are consistent with their immutable
 /// counterparts, meaning that Strings will trim [`char::is_whitespace`], while
@@ -69,9 +69,9 @@ pub trait TrimMut {
 /// The trait methods included are:
 /// | Method | Description |
 /// | ------ | ----------- |
-/// | `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback. |
-/// | `trim_start_matches_mut` | Trim arbitrary leading bytes via callback. |
-/// | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback. |
+/// | `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback (mutably). |
+/// | `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
+/// | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
 ///
 /// **Note:** The atom being matched varies by implementation to keep behaviors
 /// consistent with their immutable counterparts. In other words, `String` uses
