@@ -128,97 +128,20 @@ pub trait TrimSliceMatches {
 }
 
 
-
-impl TrimSlice for &[u8] {
-	#[allow(clippy::option_if_let_else)]
-	/// # Trim.
-	///
-	/// Trim leading and trailing (ASCII) whitespace from a slice.
-	fn trim(&self) -> &[u8] {
-		if let Some(start) = self.iter().position(|b| ! b.is_ascii_whitespace()) {
-			if let Some(end) = self.iter().rposition(|b| ! b.is_ascii_whitespace()) {
-				return &self[start..=end];
-			}
-		}
-
-		&[]
-	}
-
-	/// # Trim Start.
-	///
-	/// Trim leading (ASCII) whitespace from a slice.
-	fn trim_start(&self) -> &[u8] {
-		self.iter()
-			.position(|b| ! b.is_ascii_whitespace())
-			.map_or(&[], |p| &self[p..])
-	}
-
-	/// # Trim End.
-	///
-	/// Trim trailing (ASCII) whitespace from a slice.
-	fn trim_end(&self) -> &[u8] {
-		self.iter()
-			.rposition(|b| ! b.is_ascii_whitespace())
-			.map_or(&[], |p| &self[..=p])
-	}
-}
-
-impl TrimSliceMatches for &[u8] {
-	#[allow(clippy::option_if_let_else)]
-	/// # Trim Matches.
-	///
-	/// Trim arbitrary leading and trailing bytes as determined by the provided
-	/// callback, where a return value of `true` means trim.
-	fn trim_matches<F>(&self, cb: F) -> &[u8]
-	where F: Fn(u8) -> bool {
-		let cb = |b: &u8| ! cb(*b);
-
-		if let Some(start) = self.iter().position(cb) {
-			if let Some(end) = self.iter().rposition(cb) {
-				return &self[start..=end];
-			}
-		}
-
-		&[]
-	}
-
-	/// # Trim Start Matches.
-	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim.
-	fn trim_start_matches<F>(&self, cb: F) -> &[u8]
-	where F: Fn(u8) -> bool {
-		self.iter()
-			.position(|b: &u8| ! cb(*b))
-			.map_or(&[], |p| &self[p..])
-	}
-
-	/// # Trim Start Matches.
-	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim.
-	fn trim_end_matches<F>(&self, cb: F) -> &[u8]
-	where F: Fn(u8) -> bool {
-		self.iter()
-			.rposition(|b: &u8| ! cb(*b))
-			.map_or(&[], |p| &self[..=p])
-	}
-}
-
-macro_rules! trim_slice_alloc {
+macro_rules! trim_slice {
 	($($ty:ty),+ $(,)?) => ($(
 		impl TrimSlice for $ty {
 			/// # Trim.
 			///
 			/// Trim leading and trailing (ASCII) whitespace from a slice.
 			fn trim(&self) -> &[u8] {
-				if let Some(start) = self.iter().position(|b| ! b.is_ascii_whitespace()) {
-					if let Some(end) = self.iter().rposition(|b| ! b.is_ascii_whitespace()) {
-						return &self[start..=end];
-					}
-				}
-
-				&[]
+				self.iter()
+					.position(not_whitespace)
+					.map_or(&[], |start| {
+						// We know there is an end because there's a beginning.
+						let end = self.iter().rposition(not_whitespace).unwrap();
+						&self[start..=end]
+					})
 			}
 
 			/// # Trim Start.
@@ -226,7 +149,7 @@ macro_rules! trim_slice_alloc {
 			/// Trim leading (ASCII) whitespace from a slice.
 			fn trim_start(&self) -> &[u8] {
 				self.iter()
-					.position(|b| ! b.is_ascii_whitespace())
+					.position(not_whitespace)
 					.map_or(&[], |p| &self[p..])
 			}
 
@@ -235,7 +158,7 @@ macro_rules! trim_slice_alloc {
 			/// Trim trailing (ASCII) whitespace from a slice.
 			fn trim_end(&self) -> &[u8] {
 				self.iter()
-					.rposition(|b| ! b.is_ascii_whitespace())
+					.rposition(not_whitespace)
 					.map_or(&[], |p| &self[..=p])
 			}
 		}
@@ -249,13 +172,13 @@ macro_rules! trim_slice_alloc {
 			where F: Fn(u8) -> bool {
 				let cb = |b: &u8| ! cb(*b);
 
-				if let Some(start) = self.iter().position(cb) {
-					if let Some(end) = self.iter().rposition(cb) {
-						return &self[start..=end];
-					}
-				}
-
-				&[]
+				self.iter()
+					.position(cb)
+					.map_or(&[], |start| {
+						// We know there is an end because there's a beginning.
+						let end = self.iter().rposition(cb).unwrap();
+						&self[start..=end]
+					})
 			}
 
 			/// # Trim Start Matches.
@@ -283,7 +206,17 @@ macro_rules! trim_slice_alloc {
 	)+);
 }
 
-trim_slice_alloc!(Box<[u8]>, Vec<u8>);
+trim_slice!(&[u8], Box<[u8]>, Vec<u8>);
+
+
+
+#[allow(clippy::trivially_copy_pass_by_ref)] // It's the signature iterator wants.
+#[inline]
+/// # Not Whitespace.
+///
+/// This callback is used to find the first or last non-whitespace byte in a
+/// slice. It is only split off into its own method to enforce consistency.
+const fn not_whitespace(b: &u8) -> bool { ! b.is_ascii_whitespace() }
 
 
 
