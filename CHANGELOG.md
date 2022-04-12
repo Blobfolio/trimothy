@@ -5,6 +5,7 @@
 ## Fixed
 
 * Return empty slice on non-empty, all match.
+* Markdown (docs) formatting issues.
 
 
 

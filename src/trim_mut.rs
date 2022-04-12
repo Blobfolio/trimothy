@@ -35,7 +35,7 @@ use core::intrinsics::copy;
 /// | `trim_start_mut` | Trim leading whitespace (mutably). |
 /// | `trim_end_mut` | Trim trailing whitespace (mutably). |
 ///
-/// **Note:** These behaviors of these methods are consistent with their immutable
+/// **Note:** The behaviors of these methods are consistent with their immutable
 /// counterparts, meaning that Strings will trim [`char::is_whitespace`], while
 /// slices will only trim [`u8::is_ascii_whitespace`].
 ///
@@ -75,10 +75,9 @@ pub trait TrimMut {
 /// | `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
 /// | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
 ///
-/// **Note:** The "atom" being matched varies by implementation to keep behaviors
-/// consistent with their immutable counterparts. In other words, the `String`
-/// callback accepts a `char`, while the `Vec<u8>` and `Box<[u8]>` callbacks
-/// accept `u8`.
+/// **Note:** To maintain consistency with their immutable counterparts, the
+/// `String` implementation expects callbacks that match a `char`, while the
+/// `Vec<u8>` and `Box<[u8]>` implementations expect callbacks that match a `u8`.
 ///
 /// Refer to the individual implementations for examples.
 pub trait TrimMatchesMut {
