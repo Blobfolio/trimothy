@@ -8,6 +8,8 @@ use alloc::{
 	vec::Vec,
 };
 
+use crate::not_whitespace;
+
 
 
 /// # Trim Slice.
@@ -209,16 +211,6 @@ macro_rules! trim_slice {
 }
 
 trim_slice!(&[u8], Box<[u8]>, Vec<u8>);
-
-
-
-#[allow(clippy::trivially_copy_pass_by_ref)] // It's the signature iterator wants.
-#[inline]
-/// # Not Whitespace.
-///
-/// This callback is used to find the first or last non-whitespace byte in a
-/// slice. It is only split off into its own method to enforce consistency.
-const fn not_whitespace(b: &u8) -> bool { ! b.is_ascii_whitespace() }
 
 
 

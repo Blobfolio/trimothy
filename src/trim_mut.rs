@@ -10,6 +10,7 @@ use alloc::{
 };
 
 use crate::{
+	not_whitespace,
 	TrimSlice,
 	TrimSliceMatches,
 };
@@ -136,8 +137,8 @@ impl TrimMut for String {
 			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
 					let v = self.as_mut_vec();
 					copy(trimmed_ptr, v.as_mut_ptr(), trimmed_len);
@@ -169,8 +170,8 @@ impl TrimMut for String {
 			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
 					let v = self.as_mut_vec();
 					copy(trimmed_ptr, v.as_mut_ptr(), trimmed_len);
@@ -228,8 +229,8 @@ impl TrimMatchesMut for String {
 			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
 					let v = self.as_mut_vec();
 					copy(trimmed_ptr, v.as_mut_ptr(), trimmed_len);
@@ -264,8 +265,8 @@ impl TrimMatchesMut for String {
 			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
 					let v = self.as_mut_vec();
 					copy(trimmed_ptr, v.as_mut_ptr(), trimmed_len);
@@ -444,22 +445,8 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b"Hello World!");
 	/// ```
 	fn trim_mut(&mut self) {
-		let trimmed = self.trim();
-		let trimmed_len = trimmed.len();
-
-		if trimmed_len < self.len() {
-			if 0 < trimmed_len  {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
-				unsafe {
-					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
-			}
-			else { self.truncate(0); }
-		}
+		self.trim_start_mut();
+		self.trim_end_mut();
 	}
 
 	/// # Trim Start Mut.
@@ -476,22 +463,19 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b"Hello World! ");
 	/// ```
 	fn trim_start_mut(&mut self) {
-		let trimmed = self.trim_start();
-		let trimmed_len = trimmed.len();
+		if let Some(start) = self.iter().position(not_whitespace) {
+			if 0 < start {
+				let trimmed_len = self.len() - start;
 
-		if trimmed_len < self.len() {
-			if 0 < trimmed_len {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
-					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
+					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
 					self.set_len(trimmed_len);
 				}
 			}
-			else { self.truncate(0); }
 		}
+		else { self.truncate(0); }
 	}
 
 	/// # Trim End Mut.
@@ -508,9 +492,10 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b" Hello World!");
 	/// ```
 	fn trim_end_mut(&mut self) {
-		let trimmed = self.trim_end();
-		let trimmed_len = trimmed.len();
-		self.truncate(trimmed_len);
+		if let Some(end) = self.iter().rposition(not_whitespace) {
+			self.truncate(end + 1);
+		}
+		else { self.truncate(0); }
 	}
 }
 
@@ -541,8 +526,8 @@ impl TrimMatchesMut for Vec<u8> {
 			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
 					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
 					self.set_len(trimmed_len);
@@ -569,22 +554,19 @@ impl TrimMatchesMut for Vec<u8> {
 	/// ```
 	fn trim_start_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_start_matches(cb);
-		let trimmed_len = trimmed.len();
+		if let Some(start) = self.iter().position(|b: &u8| ! cb(*b)) {
+			if 0 < start {
+				let trimmed_len = self.len() - start;
 
-		if trimmed_len < self.len() {
-			if 0 < trimmed_len {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start. It
-				// should be A-OK.
+				// Safety: we're just moving the trimmed portion to the start
+				// of the buffer and chopping the length to match.
 				unsafe {
-					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
+					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
 					self.set_len(trimmed_len);
 				}
 			}
-			else { self.truncate(0); }
 		}
+		else { self.truncate(0); }
 	}
 
 	/// # Trim End Matches Mut.
@@ -604,8 +586,9 @@ impl TrimMatchesMut for Vec<u8> {
 	/// ```
 	fn trim_end_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_end_matches(cb);
-		let trimmed_len = trimmed.len();
-		self.truncate(trimmed_len);
+		if let Some(end) = self.iter().rposition(|b: &u8| ! cb(*b)) {
+			self.truncate(end + 1);
+		}
+		else { self.truncate(0); }
 	}
 }

@@ -108,3 +108,13 @@ pub use trim_slice::{
 	TrimSlice,
 	TrimSliceMatches,
 };
+
+
+
+#[allow(clippy::trivially_copy_pass_by_ref)] // It's the signature iterator wants.
+#[inline]
+/// # Not Whitespace.
+///
+/// This callback is used to find the first or last non-whitespace byte in a
+/// slice. It is only split off into its own method to enforce consistency.
+pub(crate) const fn not_whitespace(b: &u8) -> bool { ! b.is_ascii_whitespace() }
