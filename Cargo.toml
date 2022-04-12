@@ -34,3 +34,8 @@ std = []
 name = "fn_trim_slice"
 harness = false
 required-features = [ "std" ]
+
+[[bench]]
+name = "fn_trim_mut_vec"
+harness = false
+required-features = [ "std" ]
