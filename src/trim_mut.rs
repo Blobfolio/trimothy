@@ -131,8 +131,7 @@ impl TrimMut for String {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -143,6 +142,7 @@ impl TrimMut for String {
 					v.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -164,8 +164,7 @@ impl TrimMut for String {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -176,6 +175,7 @@ impl TrimMut for String {
 					v.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -223,8 +223,7 @@ impl TrimMatchesMut for String {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -235,6 +234,7 @@ impl TrimMatchesMut for String {
 					v.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -259,8 +259,7 @@ impl TrimMatchesMut for String {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -271,6 +270,7 @@ impl TrimMatchesMut for String {
 					v.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -446,8 +446,7 @@ impl TrimMut for Vec<u8> {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len  {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -457,6 +456,7 @@ impl TrimMut for Vec<u8> {
 					self.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -478,8 +478,7 @@ impl TrimMut for Vec<u8> {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -489,6 +488,7 @@ impl TrimMut for Vec<u8> {
 					self.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -536,8 +536,7 @@ impl TrimMatchesMut for Vec<u8> {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -547,6 +546,7 @@ impl TrimMatchesMut for Vec<u8> {
 					self.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
@@ -571,8 +571,7 @@ impl TrimMatchesMut for Vec<u8> {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < self.len() {
-			if trimmed_len == 0 { self.truncate(0); }
-			else {
+			if 0 < trimmed_len {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start. It
@@ -582,6 +581,7 @@ impl TrimMatchesMut for Vec<u8> {
 					self.set_len(trimmed_len);
 				}
 			}
+			else { self.truncate(0); }
 		}
 	}
 
