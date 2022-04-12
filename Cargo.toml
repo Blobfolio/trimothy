@@ -1,6 +1,6 @@
 [package]
 name = "trimothy"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Blobfolio, LLC. <hello@blobfolio.com>"]
 edition = "2021"
 rust-version = "1.60"
@@ -32,5 +32,10 @@ std = []
 
 [[bench]]
 name = "fn_trim_slice"
+harness = false
+required-features = [ "std" ]
+
+[[bench]]
+name = "fn_trim_mut_vec"
 harness = false
 required-features = [ "std" ]
