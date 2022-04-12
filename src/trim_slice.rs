@@ -17,13 +17,14 @@ use alloc::{
 /// `String`/`&str`.
 ///
 /// The trait methods included are:
+///
 /// | Method | Description |
 /// | ------ | ----------- |
 /// | `trim` | Trim leading and trailing (ASCII) whitespace. |
 /// | `trim_start` | Trim leading (ASCII) whitespace. |
 /// | `trim_end` | Trim trailing (ASCII) whitespace. |
 ///
-/// **Note:** because these methods work with individual bytes — rather than chars
+/// **Note:** Because these methods work with individual bytes — rather than chars
 /// — these methods only trim [`u8::is_ascii_whitespace`], not [`char::is_whitespace`].
 pub trait TrimSlice {
 	/// # Trim.
@@ -78,6 +79,7 @@ pub trait TrimSlice {
 /// enjoyed by `String`/`&str`.
 ///
 /// The trait methods included are:
+///
 /// | Method | Description |
 /// | ------ | ----------- |
 /// | `trim_matches` | Trim arbitrary leading and trailing bytes via callback. |
