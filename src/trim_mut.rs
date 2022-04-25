@@ -116,6 +116,7 @@ pub trait TrimMatchesMut {
 
 
 impl TrimMut for String {
+	#[allow(unsafe_code)]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing whitespace, mutably.
@@ -149,6 +150,7 @@ impl TrimMut for String {
 		}
 	}
 
+	#[allow(unsafe_code)]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading whitespace, mutably.
@@ -205,6 +207,7 @@ impl TrimMut for String {
 impl TrimMatchesMut for String {
 	type MatchUnit = char;
 
+	#[allow(unsafe_code)]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
@@ -241,6 +244,7 @@ impl TrimMatchesMut for String {
 		}
 	}
 
+	#[allow(unsafe_code)]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided callback,
@@ -449,6 +453,7 @@ impl TrimMut for Vec<u8> {
 		self.trim_end_mut();
 	}
 
+	#[allow(unsafe_code)]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading (ASCII) whitespace, mutably.
@@ -502,6 +507,7 @@ impl TrimMut for Vec<u8> {
 impl TrimMatchesMut for Vec<u8> {
 	type MatchUnit = u8;
 
+	#[allow(unsafe_code)]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
@@ -537,6 +543,7 @@ impl TrimMatchesMut for Vec<u8> {
 		}
 	}
 
+	#[allow(unsafe_code)]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided callback,
