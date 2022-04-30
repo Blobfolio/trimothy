@@ -1,12 +1,20 @@
 # Changelog
 
+## [0.1.2](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.2) - 2022-04-30
+
+### Changed
+
+* Make crate `#![no_std]` w/o any feature gates
+
+
+
 ## [0.1.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.1) - 2022-04-11
 
-## Changes
+### Changed
 
 * Minor performance improvements
 
-## Fixed
+### Fixed
 
 * Return empty slice when all bytes match trim predicate.
 * Markdown (docs) formatting issues.

@@ -5,6 +5,8 @@ Trimothy is a small library that expands on the limited String- and slice-trimmi
 
 If any of these methods happened to be introduced into stable Rust in the future, they will simply be removed from here.
 
+This crate is `#![no_std]`-compatible.
+
 
 
 ### [`TrimSlice`]
@@ -60,14 +62,9 @@ The dependency can be added the normal way:
 [dependencies]
 trimothy = "0.1"
 ```
-
-To use this library with `no_std` environments — albeith with `alloc` — disable the default `std` crate feature:
-
-```ignore,toml
-[dependencies.trimothy]
-version = "0.1"
-default-features = false
 */
+
+#![deny(unsafe_code)]
 
 #![warn(
 	clippy::filetype_is_file,
@@ -92,9 +89,8 @@ default-features = false
 )]
 #![allow(clippy::module_name_repetitions)]
 
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 
-#[cfg(not(feature = "std"))]
 extern crate alloc;
 
 mod trim_mut;
