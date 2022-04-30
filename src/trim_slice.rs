@@ -2,12 +2,10 @@
 # Trimothy - Trim Slice
 */
 
-#[cfg(not(feature = "std"))]
 use alloc::{
 	boxed::Box,
 	vec::Vec,
 };
-
 use crate::not_whitespace;
 
 

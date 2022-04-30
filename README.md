@@ -9,6 +9,8 @@ Trimothy is a small library that expands on the limited String- and slice-trimmi
 
 If any of these methods happened to be introduced into stable Rust in the future, they will simply be removed from here.
 
+This crate is `#![no_std]`-compatible.
+
 
 
 ### TrimSlice
@@ -65,13 +67,6 @@ The dependency can be added the normal way:
 trimothy = "0.1"
 ```
 
-To use this library with `no_std` environments — albeith with `alloc` — disable the default `std` crate feature:
-
-```toml
-[dependencies.trimothy]
-version = "0.1"
-default-features = false
-```
 
 
 ## License

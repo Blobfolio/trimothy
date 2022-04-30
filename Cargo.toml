@@ -8,7 +8,8 @@ description = "Traits for trimming slices, vecs, and strings."
 license = "WTFPL"
 repository = "https://github.com/Blobfolio/trimothy"
 readme = "README.md"
-keywords = []
+keywords = [ "trim" ]
+categories = [ "no-std" ]
 exclude = [
 	".github",
 	".gitignore",
@@ -26,16 +27,10 @@ credits-dir = "./"
 [dev-dependencies]
 brunch = "0.2.*"
 
-[features]
-default = [ "std" ]
-std = []
-
 [[bench]]
 name = "fn_trim_slice"
 harness = false
-required-features = [ "std" ]
 
 [[bench]]
 name = "fn_trim_mut_vec"
 harness = false
-required-features = [ "std" ]

@@ -2,24 +2,17 @@
 # Trimothy - Mutable Trim
 */
 
-#[cfg(not(feature = "std"))]
 use alloc::{
 	boxed::Box,
 	string::String,
 	vec::Vec,
 };
-
+use core::intrinsics::copy;
 use crate::{
 	not_whitespace,
 	TrimSlice,
 	TrimSliceMatches,
 };
-
-#[cfg(feature = "std")]
-use std::ptr::copy;
-
-#[cfg(not(feature = "std"))]
-use core::intrinsics::copy;
 
 
 
