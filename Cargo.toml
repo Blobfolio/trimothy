@@ -32,5 +32,5 @@ name = "fn_trim_slice"
 harness = false
 
 [[bench]]
-name = "fn_trim_mut_vec"
+name = "fn_trim_mut"
 harness = false
