@@ -4,6 +4,7 @@
 [![crates.io](https://img.shields.io/crates/v/trimothy.svg)](https://crates.io/crates/trimothy)
 [![Build Status](https://github.com/Blobfolio/trimothy/workflows/Build/badge.svg)](https://github.com/Blobfolio/trimothy/actions)
 [![Dependency Status](https://deps.rs/repo/github/blobfolio/trimothy/status.svg)](https://deps.rs/repo/github/blobfolio/trimothy)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Blobfolio/trimothy)
 
 Trimothy is a small library that expands on the limited String- and slice-trimming capabilities provided by the standard library.
 
