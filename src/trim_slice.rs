@@ -6,7 +6,6 @@ use alloc::{
 	boxed::Box,
 	vec::Vec,
 };
-use crate::not_whitespace;
 
 
 
@@ -136,33 +135,19 @@ macro_rules! trim_slice {
 			/// # Trim.
 			///
 			/// Trim leading and trailing (ASCII) whitespace from a slice.
-			fn trim(&self) -> &[u8] {
-				self.iter()
-					.position(not_whitespace)
-					.map_or(&[], |start| {
-						// We know there is an end because there's a beginning.
-						let end = self.iter().rposition(not_whitespace).unwrap();
-						&self[start..=end]
-					})
-			}
+			fn trim(&self) -> &[u8] { trim_end(trim_start(&self)) }
 
+			#[inline]
 			/// # Trim Start.
 			///
 			/// Trim leading (ASCII) whitespace from a slice.
-			fn trim_start(&self) -> &[u8] {
-				self.iter()
-					.position(not_whitespace)
-					.map_or(&[], |p| &self[p..])
-			}
+			fn trim_start(&self) -> &[u8] { trim_start(&self) }
 
+			#[inline]
 			/// # Trim End.
 			///
 			/// Trim trailing (ASCII) whitespace from a slice.
-			fn trim_end(&self) -> &[u8] {
-				self.iter()
-					.rposition(not_whitespace)
-					.map_or(&[], |p| &self[..=p])
-			}
+			fn trim_end(&self) -> &[u8] { trim_end(&self) }
 		}
 
 		impl TrimSliceMatches for $ty {
@@ -209,6 +194,32 @@ macro_rules! trim_slice {
 }
 
 trim_slice!([u8], Box<[u8]>, Vec<u8>);
+
+
+
+/// # Trim Slice Start.
+///
+/// This is a copy of the nightly `trim_ascii_start` so it can be used on
+/// stable. If/when that feature is stabilized, we'll use it directly.
+const fn trim_start(mut src: &[u8]) -> &[u8] {
+	while let [first, rest @ ..] = src {
+		if first.is_ascii_whitespace() { src = rest; }
+		else { break; }
+	}
+	src
+}
+
+/// # Trim Slice End.
+///
+/// This is a copy of the nightly `trim_ascii_end` so it can be used on
+/// stable. If/when that feature is stabilized, we'll use it directly.
+const fn trim_end(mut src: &[u8]) -> &[u8] {
+	while let [rest @ .., last] = src {
+		if last.is_ascii_whitespace() { src = rest; }
+		else { break; }
+	}
+	src
+}
 
 
 
