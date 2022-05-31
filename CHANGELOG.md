@@ -1,5 +1,15 @@
 # Changelog
 
+
+
+## [0.1.3](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.3) - 2022-05-30
+
+### Changed
+
+* Minor performance improvements for `TrimSlice` implementations
+
+
+
 ## [0.1.2](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.2) - 2022-04-30
 
 ### Changed
