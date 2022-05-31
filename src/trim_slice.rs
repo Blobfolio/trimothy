@@ -266,6 +266,10 @@ mod tests {
 		assert_eq!(T_HELLO_E.trim_matches(|b| b'h' == b), b"ello\t");
 		assert_eq!(T_HELLO_E.to_vec().trim_matches(|b| b'h' == b), b"ello\t");
 		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_matches(|b| b'h' == b), b"ello\t");
+
+		// This should also work on arrays.
+		let arr: [u8; 5] = [b' ', b' ', b'.', b' ', b' '];
+		assert_eq!(arr.trim(), &[b'.']);
 	}
 
 	#[test]
