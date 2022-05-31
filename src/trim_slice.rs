@@ -208,7 +208,7 @@ macro_rules! trim_slice {
 	)+);
 }
 
-trim_slice!(&[u8], Box<[u8]>, Vec<u8>);
+trim_slice!([u8], Box<[u8]>, Vec<u8>);
 
 
 
