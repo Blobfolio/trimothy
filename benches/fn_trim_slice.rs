@@ -6,7 +6,10 @@ use brunch::{
 	Bench,
 	benches,
 };
-use trimothy::TrimSlice;
+use trimothy::{
+	TrimSlice,
+	TrimSliceMatches,
+};
 use std::time::Duration;
 
 
@@ -44,4 +47,14 @@ benches!(
 	Bench::new("&str", "trim_end()")
 		.timed(Duration::from_secs(1))
 		.with(|| STR.trim_end()),
+
+	Bench::spacer(),
+
+	Bench::new("&[u8]", "trim_start_matches()")
+		.timed(Duration::from_secs(1))
+		.with(|| BYTES.trim_start_matches(|b| matches!(b, b'\t' | b' ' | b'\n' | b'H' | b'e'))),
+
+	Bench::new("&str", "trim_start_matches()")
+		.timed(Duration::from_secs(1))
+		.with(|| STR.trim_start_matches(|c| matches!(c, '\t' | ' ' | '\n' | 'H' | 'e'))),
 );
