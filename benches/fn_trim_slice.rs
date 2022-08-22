@@ -10,7 +10,6 @@ use trimothy::{
 	TrimSlice,
 	TrimSliceMatches,
 };
-use std::time::Duration;
 
 
 
@@ -20,41 +19,33 @@ const STR: &str = "  \t\nHello World!\n\t  ";
 
 
 benches!(
-	Bench::new("&[u8]", "trim()")
-		.timed(Duration::from_secs(1))
-		.with(|| BYTES.trim()),
+	Bench::new("&[u8]::trim()")
+		.run(|| BYTES.trim()),
 
-	Bench::new("&str", "trim()")
-		.timed(Duration::from_secs(1))
-		.with(|| STR.trim()),
+	Bench::new("&str::trim()")
+		.run(|| STR.trim()),
 
 	Bench::spacer(),
 
-	Bench::new("&[u8]", "trim_start()")
-		.timed(Duration::from_secs(1))
-		.with(|| BYTES.trim_start()),
+	Bench::new("&[u8]::trim_start()")
+		.run(|| BYTES.trim_start()),
 
-	Bench::new("&str", "trim_start()")
-		.timed(Duration::from_secs(1))
-		.with(|| STR.trim_start()),
+	Bench::new("&str::trim_start()")
+		.run(|| STR.trim_start()),
 
 	Bench::spacer(),
 
-	Bench::new("&[u8]", "trim_end()")
-		.timed(Duration::from_secs(1))
-		.with(|| BYTES.trim_end()),
+	Bench::new("&[u8]::trim_end()")
+		.run(|| BYTES.trim_end()),
 
-	Bench::new("&str", "trim_end()")
-		.timed(Duration::from_secs(1))
-		.with(|| STR.trim_end()),
+	Bench::new("&str::trim_end()")
+		.run(|| STR.trim_end()),
 
 	Bench::spacer(),
 
-	Bench::new("&[u8]", "trim_start_matches()")
-		.timed(Duration::from_secs(1))
-		.with(|| BYTES.trim_start_matches(|b| matches!(b, b'\t' | b' ' | b'\n' | b'H' | b'e'))),
+	Bench::new("&[u8]::trim_start_matches()")
+		.run(|| BYTES.trim_start_matches(|b| matches!(b, b'\t' | b' ' | b'\n' | b'H' | b'e'))),
 
-	Bench::new("&str", "trim_start_matches()")
-		.timed(Duration::from_secs(1))
-		.with(|| STR.trim_start_matches(|c| matches!(c, '\t' | ' ' | '\n' | 'H' | 'e'))),
+	Bench::new("&str::trim_start_matches()")
+		.run(|| STR.trim_start_matches(|c| matches!(c, '\t' | ' ' | '\n' | 'H' | 'e'))),
 );
