@@ -1,6 +1,11 @@
 /*!
 # Trimothy
 
+[![Documentation](https://docs.rs/trimothy/badge.svg)](https://docs.rs/trimothy/)
+[![Changelog](https://img.shields.io/crates/v/trimothy.svg?label=Changelog&color=9cf)](https://github.com/Blobfolio/trimothy/blob/master/CHANGELOG.md)
+[![crates.io](https://img.shields.io/crates/v/trimothy.svg)](https://crates.io/crates/trimothy)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Blobfolio/trimothy)
+
 Trimothy is a small library that expands on the limited String- and slice-trimming capabilities provided by the standard library.
 
 If any of these methods happened to be introduced into stable Rust in the future, they will simply be removed from here.

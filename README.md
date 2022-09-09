@@ -1,6 +1,7 @@
 # Trimothy
 
 [![Documentation](https://docs.rs/trimothy/badge.svg)](https://docs.rs/trimothy/)
+[![Changelog](https://img.shields.io/crates/v/trimothy.svg?label=Changelog&color=9cf)](https://github.com/Blobfolio/trimothy/blob/master/CHANGELOG.md)
 [![crates.io](https://img.shields.io/crates/v/trimothy.svg)](https://crates.io/crates/trimothy)
 [![Build Status](https://github.com/Blobfolio/trimothy/workflows/Build/badge.svg)](https://github.com/Blobfolio/trimothy/actions)
 [![Dependency Status](https://deps.rs/repo/github/blobfolio/trimothy/status.svg)](https://deps.rs/repo/github/blobfolio/trimothy)
