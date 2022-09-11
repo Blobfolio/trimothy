@@ -2,6 +2,14 @@
 
 
 
+## [0.1.4](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.4) - TBD
+
+### Changed
+
+* Lower MSRV `1.56`
+
+
+
 ## [0.1.3](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.3) - 2022-05-30
 
 ### Changed
