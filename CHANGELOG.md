@@ -2,11 +2,12 @@
 
 
 
-## [0.1.4](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.4) - TBD
+## [0.1.4](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.4) - 2022-09-22
 
 ### Changed
 
 * Lower MSRV `1.56`
+* Improve docs
 
 
 
