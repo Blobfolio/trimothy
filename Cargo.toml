@@ -1,9 +1,9 @@
 [package]
 name = "trimothy"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Blobfolio, LLC. <hello@blobfolio.com>"]
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.56"
 description = "Traits for trimming slices, vecs, and strings."
 license = "WTFPL"
 repository = "https://github.com/Blobfolio/trimothy"
@@ -25,7 +25,7 @@ man-dir = "./"
 credits-dir = "./"
 
 [dev-dependencies]
-brunch = "0.2.*, >=0.2.5"
+brunch = "0.3.*"
 
 [[bench]]
 name = "fn_trim_slice"

@@ -1,10 +1,12 @@
 # Trimothy
 
-[![Documentation](https://docs.rs/trimothy/badge.svg)](https://docs.rs/trimothy/)
-[![crates.io](https://img.shields.io/crates/v/trimothy.svg)](https://crates.io/crates/trimothy)
-[![Build Status](https://github.com/Blobfolio/trimothy/workflows/Build/badge.svg)](https://github.com/Blobfolio/trimothy/actions)
-[![Dependency Status](https://deps.rs/repo/github/blobfolio/trimothy/status.svg)](https://deps.rs/repo/github/blobfolio/trimothy)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/Blobfolio/trimothy)
+[![docs.rs](https://img.shields.io/docsrs/trimothy.svg?style=flat-square&label=docs.rs)](https://docs.rs/trimothy/)
+[![changelog](https://img.shields.io/crates/v/trimothy.svg?style=flat-square&label=changelog&color=9b59b6)](https://github.com/Blobfolio/trimothy/blob/master/CHANGELOG.md)<br>
+[![crates.io](https://img.shields.io/crates/v/trimothy.svg?style=flat-square&label=crates.io)](https://crates.io/crates/trimothy)
+[![ci](https://img.shields.io/github/workflow/status/Blobfolio/trimothy/Build.svg?style=flat-square&label=ci)](https://github.com/Blobfolio/trimothy/actions)
+[![deps.rs](https://deps.rs/repo/github/blobfolio/trimothy/status.svg?style=flat-square&label=deps.rs)](https://deps.rs/repo/github/blobfolio/trimothy)<br>
+[![license](https://img.shields.io/badge/license-wtfpl-ff1493?style=flat-square)](https://en.wikipedia.org/wiki/WTFPL)
+[![contributions welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square&label=contributions)](https://github.com/Blobfolio/trimothy/issues)
 
 Trimothy is a small library that expands on the limited String- and slice-trimming capabilities provided by the standard library.
 
