@@ -157,15 +157,17 @@ macro_rules! trim_slice {
 			/// callback, where a return value of `true` means trim.
 			fn trim_matches<F>(&self, cb: F) -> &[u8]
 			where F: Fn(u8) -> bool {
-				let cb = |b: &u8| ! cb(*b);
+				let mut src: &[u8] = &self;
+				while let [first, rest @ ..] = src {
+					if cb(*first) { src = rest; }
+					else { break; }
+				}
 
-				self.iter()
-					.position(cb)
-					.map_or(&[], |start| {
-						// We know there is an end because there's a beginning.
-						let end = self.iter().rposition(cb).unwrap();
-						&self[start..=end]
-					})
+				while let [rest @ .., last] = src {
+					if cb(*last) { src = rest; }
+					else { break; }
+				}
+				src
 			}
 
 			/// # Trim Start Matches.
@@ -174,9 +176,12 @@ macro_rules! trim_slice {
 			/// where a return value of `true` means trim.
 			fn trim_start_matches<F>(&self, cb: F) -> &[u8]
 			where F: Fn(u8) -> bool {
-				self.iter()
-					.position(|b: &u8| ! cb(*b))
-					.map_or(&[], |p| &self[p..])
+				let mut src: &[u8] = &self;
+				while let [first, rest @ ..] = src {
+					if cb(*first) { src = rest; }
+					else { break; }
+				}
+				src
 			}
 
 			/// # Trim Start Matches.
@@ -185,9 +190,12 @@ macro_rules! trim_slice {
 			/// where a return value of `true` means trim.
 			fn trim_end_matches<F>(&self, cb: F) -> &[u8]
 			where F: Fn(u8) -> bool {
-				self.iter()
-					.rposition(|b: &u8| ! cb(*b))
-					.map_or(&[], |p| &self[..=p])
+				let mut src: &[u8] = &self;
+				while let [rest @ .., last] = src {
+					if cb(*last) { src = rest; }
+					else { break; }
+				}
+				src
 			}
 		}
 	)+);
