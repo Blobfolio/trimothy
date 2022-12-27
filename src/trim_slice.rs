@@ -132,22 +132,29 @@ pub trait TrimSliceMatches {
 macro_rules! trim_slice {
 	($($ty:ty),+ $(,)?) => ($(
 		impl TrimSlice for $ty {
+			#[inline]
 			/// # Trim.
 			///
 			/// Trim leading and trailing (ASCII) whitespace from a slice.
-			fn trim(&self) -> &[u8] { trim_end(trim_start(&self)) }
+			fn trim(&self) -> &[u8] {
+				self.trim_matches(|b| b.is_ascii_whitespace())
+			}
 
 			#[inline]
 			/// # Trim Start.
 			///
 			/// Trim leading (ASCII) whitespace from a slice.
-			fn trim_start(&self) -> &[u8] { trim_start(&self) }
+			fn trim_start(&self) -> &[u8] {
+				self.trim_start_matches(|b| b.is_ascii_whitespace())
+			}
 
 			#[inline]
 			/// # Trim End.
 			///
 			/// Trim trailing (ASCII) whitespace from a slice.
-			fn trim_end(&self) -> &[u8] { trim_end(&self) }
+			fn trim_end(&self) -> &[u8] {
+				self.trim_end_matches(|b| b.is_ascii_whitespace())
+			}
 		}
 
 		impl TrimSliceMatches for $ty {
@@ -202,32 +209,6 @@ macro_rules! trim_slice {
 }
 
 trim_slice!([u8], Box<[u8]>, Vec<u8>);
-
-
-
-/// # Trim Slice Start.
-///
-/// This is a copy of the nightly `trim_ascii_start` so it can be used on
-/// stable. If/when that feature is stabilized, we'll use it directly.
-const fn trim_start(mut src: &[u8]) -> &[u8] {
-	while let [first, rest @ ..] = src {
-		if first.is_ascii_whitespace() { src = rest; }
-		else { break; }
-	}
-	src
-}
-
-/// # Trim Slice End.
-///
-/// This is a copy of the nightly `trim_ascii_end` so it can be used on
-/// stable. If/when that feature is stabilized, we'll use it directly.
-const fn trim_end(mut src: &[u8]) -> &[u8] {
-	while let [rest @ .., last] = src {
-		if last.is_ascii_whitespace() { src = rest; }
-		else { break; }
-	}
-	src
-}
 
 
 
