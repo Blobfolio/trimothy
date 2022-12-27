@@ -2,6 +2,15 @@
 
 
 
+## [0.1.5](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.5) - 2022-12-27
+
+### Changed
+
+* Minor slice trim performance improvements
+* Update ci badge syntax (docs)
+
+
+
 ## [0.1.4](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.4) - 2022-09-22
 
 ### Changed
