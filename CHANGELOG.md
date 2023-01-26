@@ -2,6 +2,14 @@
 
 
 
+## [0.1.6](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.6) - 2023-01-26
+
+### Changed
+
+* Bump brunch `0.4`
+
+
+
 ## [0.1.5](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.5) - 2022-12-27
 
 ### Changed
