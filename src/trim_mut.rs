@@ -115,7 +115,8 @@ macro_rules! string_trim {
 		let trimmed_len = trimmed.len();
 
 		if trimmed_len < $lhs.len() {
-			if 0 < trimmed_len {
+			if 0 == trimmed_len { $lhs.truncate(0); }
+			else {
 				let trimmed_ptr = trimmed.as_ptr();
 
 				// Safety: we're just moving the trimmed portion to the start
@@ -126,7 +127,6 @@ macro_rules! string_trim {
 					v.set_len(trimmed_len);
 				}
 			}
-			else { $lhs.truncate(0); }
 		}
 	);
 }
@@ -416,7 +416,7 @@ impl TrimMut for Vec<u8> {
 	/// ```
 	fn trim_start_mut(&mut self) {
 		if let Some(start) = self.iter().position(not_whitespace) {
-			if 0 < start {
+			if 0 != start {
 				let trimmed_len = self.len() - start;
 				self.copy_within(start.., 0);
 				self.truncate(trimmed_len);
@@ -488,7 +488,7 @@ impl TrimMatchesMut for Vec<u8> {
 	fn trim_start_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
 		if let Some(start) = self.iter().position(|b: &u8| ! cb(*b)) {
-			if 0 < start {
+			if 0 != start {
 				let trimmed_len = self.len() - start;
 				self.copy_within(start.., 0);
 				self.truncate(trimmed_len);
