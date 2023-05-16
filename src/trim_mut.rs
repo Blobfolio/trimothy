@@ -401,7 +401,6 @@ impl TrimMut for Vec<u8> {
 		self.trim_end_mut();
 	}
 
-	#[allow(unsafe_code)]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading (ASCII) whitespace, mutably.
@@ -419,13 +418,8 @@ impl TrimMut for Vec<u8> {
 		if let Some(start) = self.iter().position(not_whitespace) {
 			if 0 < start {
 				let trimmed_len = self.len() - start;
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
+				self.copy_within(start.., 0);
+				self.truncate(trimmed_len);
 			}
 		}
 		else { self.truncate(0); }
@@ -455,7 +449,6 @@ impl TrimMut for Vec<u8> {
 impl TrimMatchesMut for Vec<u8> {
 	type MatchUnit = u8;
 
-	#[allow(unsafe_code)]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
@@ -473,25 +466,10 @@ impl TrimMatchesMut for Vec<u8> {
 	/// ```
 	fn trim_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_matches(cb);
-		let trimmed_len = trimmed.len();
-
-		if trimmed_len < self.len() {
-			if 0 < trimmed_len {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
-			}
-			else { self.truncate(0); }
-		}
+		self.trim_start_matches_mut(&cb);
+		self.trim_end_matches_mut(cb);
 	}
 
-	#[allow(unsafe_code)]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided callback,
@@ -512,13 +490,8 @@ impl TrimMatchesMut for Vec<u8> {
 		if let Some(start) = self.iter().position(|b: &u8| ! cb(*b)) {
 			if 0 < start {
 				let trimmed_len = self.len() - start;
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
+				self.copy_within(start.., 0);
+				self.truncate(trimmed_len);
 			}
 		}
 		else { self.truncate(0); }
