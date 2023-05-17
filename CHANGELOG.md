@@ -2,11 +2,20 @@
 
 
 
+## [0.1.7](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.7) - TBD
+
+### Changed
+
+* Remove all `unsafe` blocks
+* Improve CI coverage
+
+
+
 ## [0.1.6](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.6) - 2023-01-26
 
 ### Changed
 
-* Bump brunch `0.4`
+* Bump brunch `0.4` (dev)
 
 
 
