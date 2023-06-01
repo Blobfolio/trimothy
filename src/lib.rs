@@ -72,7 +72,7 @@ trimothy = "0.1"
 ```
 */
 
-#![deny(unsafe_code)]
+#![forbid(unsafe_code)]
 
 #![warn(
 	clippy::filetype_is_file,

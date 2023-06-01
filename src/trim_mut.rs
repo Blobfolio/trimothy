@@ -7,7 +7,6 @@ use alloc::{
 	string::String,
 	vec::Vec,
 };
-use core::intrinsics::copy;
 use crate::{
 	not_whitespace,
 	TrimSlice,
@@ -108,33 +107,8 @@ pub trait TrimMatchesMut {
 
 
 
-/// # Helper: String Trim.
-macro_rules! string_trim {
-	($lhs:ident, $trimmed:expr) => (
-		let trimmed = $trimmed;
-		let trimmed_len = trimmed.len();
-
-		if trimmed_len < $lhs.len() {
-			if 0 < trimmed_len {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					let v = $lhs.as_mut_vec();
-					copy(trimmed_ptr, v.as_mut_ptr(), trimmed_len);
-					v.set_len(trimmed_len);
-				}
-			}
-			else { $lhs.truncate(0); }
-		}
-	);
-}
-
-
-
 impl TrimMut for String {
-	#[allow(unsafe_code)]
+	#[inline]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing whitespace, mutably.
@@ -148,9 +122,11 @@ impl TrimMut for String {
 	/// s.trim_mut();
 	/// assert_eq!(s, "Hello World!");
 	/// ```
-	fn trim_mut(&mut self) { string_trim!(self, self.trim()); }
+	fn trim_mut(&mut self) {
+		self.trim_matches_mut(char::is_whitespace);
+	}
 
-	#[allow(unsafe_code)]
+	#[inline]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading whitespace, mutably.
@@ -164,8 +140,11 @@ impl TrimMut for String {
 	/// s.trim_start_mut();
 	/// assert_eq!(s, "Hello World! ");
 	/// ```
-	fn trim_start_mut(&mut self) { string_trim!(self, self.trim_start()); }
+	fn trim_start_mut(&mut self) {
+		self.trim_start_matches_mut(char::is_whitespace);
+	}
 
+	#[inline]
 	/// # Trim End Mut.
 	///
 	/// Remove trailing whitespace, mutably.
@@ -180,16 +159,13 @@ impl TrimMut for String {
 	/// assert_eq!(s, " Hello World!");
 	/// ```
 	fn trim_end_mut(&mut self) {
-		let trimmed = self.trim_end();
-		let trimmed_len = trimmed.len();
-		self.truncate(trimmed_len);
+		self.trim_end_matches_mut(char::is_whitespace);
 	}
 }
 
 impl TrimMatchesMut for String {
 	type MatchUnit = char;
 
-	#[allow(unsafe_code)]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
@@ -206,9 +182,11 @@ impl TrimMatchesMut for String {
 	/// assert_eq!(s, "ello World!");
 	/// ```
 	fn trim_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool { string_trim!(self, self.trim_matches(cb)); }
+	where F: Fn(Self::MatchUnit) -> bool {
+		self.trim_end_matches_mut(&cb);
+		self.trim_start_matches_mut(cb);
+	}
 
-	#[allow(unsafe_code)]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided callback,
@@ -226,7 +204,10 @@ impl TrimMatchesMut for String {
 	/// ```
 	fn trim_start_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		string_trim!(self, self.trim_start_matches(cb));
+		if let Some(start) = self.find(|c| ! cb(c)) {
+			if start != 0 { self.drain(..start); }
+		}
+		else { self.truncate(0); }
 	}
 
 	/// # Trim End Matches Mut.
@@ -246,9 +227,10 @@ impl TrimMatchesMut for String {
 	/// ```
 	fn trim_end_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_end_matches(cb);
-		let trimmed_len = trimmed.len();
-		self.truncate(trimmed_len);
+		if let Some(end) = self.rfind(|c| ! cb(c)) {
+			self.truncate(end + 1);
+		}
+		else { self.truncate(0); }
 	}
 }
 
@@ -397,11 +379,10 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b"Hello World!");
 	/// ```
 	fn trim_mut(&mut self) {
-		self.trim_start_mut();
 		self.trim_end_mut();
+		self.trim_start_mut();
 	}
 
-	#[allow(unsafe_code)]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading (ASCII) whitespace, mutably.
@@ -417,15 +398,10 @@ impl TrimMut for Vec<u8> {
 	/// ```
 	fn trim_start_mut(&mut self) {
 		if let Some(start) = self.iter().position(not_whitespace) {
-			if 0 < start {
+			if 0 != start {
 				let trimmed_len = self.len() - start;
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
+				self.copy_within(start.., 0);
+				self.truncate(trimmed_len);
 			}
 		}
 		else { self.truncate(0); }
@@ -455,7 +431,6 @@ impl TrimMut for Vec<u8> {
 impl TrimMatchesMut for Vec<u8> {
 	type MatchUnit = u8;
 
-	#[allow(unsafe_code)]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
@@ -473,25 +448,10 @@ impl TrimMatchesMut for Vec<u8> {
 	/// ```
 	fn trim_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_matches(cb);
-		let trimmed_len = trimmed.len();
-
-		if trimmed_len < self.len() {
-			if 0 < trimmed_len {
-				let trimmed_ptr = trimmed.as_ptr();
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(trimmed_ptr, self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
-			}
-			else { self.truncate(0); }
-		}
+		self.trim_end_matches_mut(&cb);
+		self.trim_start_matches_mut(cb);
 	}
 
-	#[allow(unsafe_code)]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided callback,
@@ -510,15 +470,10 @@ impl TrimMatchesMut for Vec<u8> {
 	fn trim_start_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
 		if let Some(start) = self.iter().position(|b: &u8| ! cb(*b)) {
-			if 0 < start {
+			if 0 != start {
 				let trimmed_len = self.len() - start;
-
-				// Safety: we're just moving the trimmed portion to the start
-				// of the buffer and chopping the length to match.
-				unsafe {
-					copy(self.as_ptr().add(start), self.as_mut_ptr(), trimmed_len);
-					self.set_len(trimmed_len);
-				}
+				self.copy_within(start.., 0);
+				self.truncate(trimmed_len);
 			}
 		}
 		else { self.truncate(0); }

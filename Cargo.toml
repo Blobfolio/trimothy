@@ -1,6 +1,6 @@
 [package]
 name = "trimothy"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Blobfolio, LLC. <hello@blobfolio.com>"]
 edition = "2021"
 rust-version = "1.56"
@@ -25,7 +25,7 @@ man-dir = "./"
 credits-dir = "./"
 
 [dev-dependencies]
-brunch = "0.4.*"
+brunch = "0.5.*"
 
 [[bench]]
 name = "fn_trim_slice"
