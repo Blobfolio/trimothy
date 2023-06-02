@@ -1,8 +1,15 @@
 # Changelog
 
 
+## [0.1.8](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.8) - 2023-06-01
 
-## [0.1.7](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.7) - 2023-06-01
+### Changed
+
+* Fix UTF8 issue with String::trim_end*
+
+
+
+## ~~0.1.7~~ - 2023-06-01
 
 ### Changed
 

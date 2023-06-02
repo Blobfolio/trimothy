@@ -221,16 +221,14 @@ impl TrimMatchesMut for String {
 	/// ```
 	/// use trimothy::TrimMatchesMut;
 	///
-	/// let mut s = String::from(" Hello World! ");
+	/// let mut s = String::from(" Hello WorlÐ! ");
 	/// s.trim_end_matches_mut(|c: char| ' ' == c || '!' == c);
-	/// assert_eq!(s, " Hello World");
+	/// assert_eq!(s, " Hello WorlÐ");
 	/// ```
 	fn trim_end_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		if let Some(end) = self.rfind(|c| ! cb(c)) {
-			self.truncate(end + 1);
-		}
-		else { self.truncate(0); }
+		let alt = self.trim_end_matches(|c| cb(c));
+		self.truncate(alt.len());
 	}
 }
 
