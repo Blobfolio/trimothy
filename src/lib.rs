@@ -59,17 +59,6 @@ This trait brings _mutable_ match-based trimming `String`, `Vec<u8>`, and `Box<[
 | `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback (mutably). |
 | `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
 | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
-
-
-
-## Installation
-
-The dependency can be added the normal way:
-
-```ignore,toml
-[dependencies]
-trimothy = "0.1"
-```
 */
 
 #![forbid(unsafe_code)]
