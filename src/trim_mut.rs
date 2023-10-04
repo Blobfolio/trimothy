@@ -500,3 +500,45 @@ impl TrimMatchesMut for Vec<u8> {
 		else { self.truncate(0); }
 	}
 }
+
+
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn trim_str() {
+		use alloc::borrow::ToOwned;
+
+		for v in [
+			"ĤéĹlo the WŎrld\u{0300}",
+			" ĤéĹlo the WŎrld\u{0300}",
+			" \tĤéĹlo the WŎrld\u{0300}",
+			"\r \nĤéĹlo\nthe WŎrld\u{0300}",
+			" ĤéĹlo the WŎrld\u{0300}\u{2003} ",
+			" \tĤéĹlo the WŎrld\u{0300}   ",
+			"\r \nĤéĹlo\nthe WŎrld\u{0300} \t\t",
+			"ĤéĹlo the WŎrld\u{0300}\0  ",
+			"ĤéĹlo the WŎrld\u{0300}\r\r",
+			"ĤéĹlo the WŎrld\u{0300} \r\t",
+			"\nHello\nWorld\n!\n",
+		] {
+			let mut v2 = v.to_owned();
+			v2.trim_start_mut();
+			assert_eq!(v2, v.trim_start());
+
+			v2 = v.to_owned();
+			v2.trim_end_mut();
+			assert_eq!(v2, v.trim_end());
+
+			v2 = v.to_owned();
+			v2.trim_mut();
+			assert_eq!(v2, v.trim());
+
+			v2 = v.to_owned();
+			v2.trim_matches_mut(|c| c == '\t');
+			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
+		}
+	}
+}
