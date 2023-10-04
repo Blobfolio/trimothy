@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [0.2.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.0) - 2023-10-03
+
+### New
+
+* `NormalizeWhitespace` trait
+
+
+
 ## [0.1.8](https://github.com/Blobfolio/trimothy/releases/tag/v0.1.8) - 2023-06-01
 
 ### Changed

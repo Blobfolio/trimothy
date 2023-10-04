@@ -76,7 +76,7 @@ The dependency can be added the normal way:
 
 ```toml
 [dependencies]
-trimothy = "0.1"
+trimothy = "0.2"
 ```
 
 
