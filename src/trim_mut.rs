@@ -227,8 +227,8 @@ impl TrimMatchesMut for String {
 	/// ```
 	fn trim_end_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		let alt = self.trim_end_matches(cb);
-		self.truncate(alt.len());
+		let trimmed_len = self.trim_end_matches(cb).len();
+		self.truncate(trimmed_len);
 	}
 }
 
