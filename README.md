@@ -60,6 +60,15 @@ This trait brings _mutable_ match-based trimming `String`, `Vec<u8>`, and `Box<[
 | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
 
 
+### [`NormalizeWhitespace`]
+
+This trait exposes an iterator over byte/string slice contents with the edges trimmed, and all contiguous inner whitespace converted to a single horizontal space.
+
+| Method | Description |
+| ------ | ----------- |
+| `normalized_whitespace` | Return said iterator. |
+
+
 
 ## Installation
 
