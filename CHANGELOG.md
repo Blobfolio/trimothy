@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [0.2.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.1) - 2023-10-04
+
+### Changed
+
+* Refactor/extend `NormalizeWhitespace` to work for all `u8`/`char` `Iterator`s
+
+
+
 ## [0.2.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.0) - 2023-10-03
 
 ### New
