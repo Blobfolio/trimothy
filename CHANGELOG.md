@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [0.2.2](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.2) - 2023-10-04
+
+### New
+
+* `NormalizeWhitespace::normalized_control_and_whitespace` member method
+
+
+
 ## [0.2.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.1) - 2023-10-04
 
 ### Changed

@@ -62,11 +62,14 @@ This trait brings _mutable_ match-based trimming `String`, `Vec<u8>`, and `Box<[
 
 ### NormalizeWhitespace
 
-This trait exposes an iterator over byte/string slice contents with the edges trimmed, and all contiguous inner whitespace converted to a single horizontal space. This trait is also implemented for existing `u8`/`char` iterators.
+This trait exposes an iterator over byte/string slice contents that trims the edges and compacts/converts all inner, contiguous spans of whitespace to a single horizontal space.
+
+This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` items.
 
 | Method | Description |
 | ------ | ----------- |
-| `normalized_whitespace` | Return said iterator. |
+| `normalized_whitespace` | Return a whitespace-normalizing iterator. |
+| `normalized_control_and_whitespace` | Return a control- and whitespace-normalizing iterator. |
 
 
 

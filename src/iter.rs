@@ -20,14 +20,41 @@ use core::{
 /// trimming the edges and compacting any inner whitespace spans, converting
 /// them to single horizontal spaces (one per span).
 ///
+/// To trim/compact control characters too, use the
+/// `normalized_control_and_whitespace` method instead.
+///
 /// This can be called on an `&[u8]` or `&str` directly, or any iterator
 /// yielding owned `u8` or `char` items.
+///
+/// Normalization can optionally be extended to cover control characters too,
+/// trimming and compacting them as if they were whitespace (along with any
+/// actual whitespace).
+///
+/// ```
+/// use trimothy::NormalizeWhitespace;
+///
+/// let abnormal = "  \0Hello\0\t\0Dolly\0\0";
+///
+/// // Normally, crap like \0 won't get normalized.
+/// let normal: String = abnormal.normalized_whitespace().collect();
+/// assert_eq!(normal, "\0Hello\0 \0Dolly\0\0");
+///
+/// // But it can be.
+/// let normal: String = abnormal.normalized_control_and_whitespace().collect();
+/// assert_eq!(normal, "Hello Dolly");
+/// ```
 pub trait NormalizeWhitespace<T: Copy + Sized, I: Iterator<Item=T>> {
 	/// # Normalized Whitespace Iterator.
 	///
 	/// Modify a byte or char iterator to trim the ends, and convert all
 	/// contiguous inner whitespace to a single horizontal space.
 	fn normalized_whitespace(self) -> NormalizeWhiteSpaceIter<T, I>;
+
+	/// # Normalized Control/Whitespace Iterator.
+	///
+	/// Same as `normalized_whitespace`, but also trim/normalize control
+	/// characters.
+	fn normalized_control_and_whitespace(self) -> NormalizeWhiteSpaceIter<T, I>;
 }
 
 impl<'a> NormalizeWhitespace<u8, Copied<Iter<'a, u8>>> for &'a [u8] {
@@ -64,6 +91,25 @@ impl<'a> NormalizeWhitespace<u8, Copied<Iter<'a, u8>>> for &'a [u8] {
 	fn normalized_whitespace(self) -> NormalizeWhiteSpaceIter<u8, Copied<Iter<'a, u8>>> {
 		self.iter().copied().normalized_whitespace()
 	}
+
+	/// # Normalized Control/Whitespace Iterator.
+	///
+	/// Same as `normalized_whitespace`, but also trim/normalize control
+	/// characters.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// use trimothy::NormalizeWhitespace;
+	///
+	/// let abnormal: &[u8] = b" \0Hello\x1b\0World!\0";
+	/// let normal: Vec<u8> = abnormal.normalized_control_and_whitespace().collect();
+	/// assert_eq!(normal, b"Hello World!");
+	/// ```
+	fn normalized_control_and_whitespace(self)
+	-> NormalizeWhiteSpaceIter<u8, Copied<Iter<'a, u8>>> {
+		self.iter().copied().normalized_control_and_whitespace()
+	}
 }
 
 impl<'a> NormalizeWhitespace<char, Chars<'a>> for &'a str {
@@ -99,6 +145,25 @@ impl<'a> NormalizeWhitespace<char, Chars<'a>> for &'a str {
 	fn normalized_whitespace(self) -> NormalizeWhiteSpaceIter<char, Chars<'a>> {
 		self.chars().normalized_whitespace()
 	}
+
+	/// # Normalized Control/Whitespace Iterator.
+	///
+	/// Same as `normalized_whitespace`, but also trim/normalize control
+	/// characters.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// use trimothy::NormalizeWhitespace;
+	///
+	/// let abnormal: &str = " \0Hello\x1b\0World!\0";
+	/// let normal: String = abnormal.normalized_control_and_whitespace().collect();
+	/// assert_eq!(normal, "Hello World!");
+	/// ```
+	fn normalized_control_and_whitespace(self)
+	-> NormalizeWhiteSpaceIter<char, Chars<'a>> {
+		self.chars().normalized_control_and_whitespace()
+	}
 }
 
 
@@ -110,23 +175,37 @@ impl<'a> NormalizeWhitespace<char, Chars<'a>> for &'a str {
 /// `NormalizeWhitespace::normalized_whitespace` implementation.
 pub struct NormalizeWhiteSpaceIter<T: Copy + Sized, I: Iterator<Item=T>> {
 	iter: I,
+	normalize_control: bool,
 	next: Option<T>,
 }
 
-/// # Helper: Implementations
+/// # Implementation Helper
 ///
 /// Implement our custom `NormalizeWhitespace` trait for existing iterators,
 /// and implement `Iterator` for the corresponding `NormalizeWhiteSpaceIter`
 /// struct.
 macro_rules! iter {
-	($ty:ty, $is:ident, $ws:literal) => (
+	($ty:ty, $is_ws:ident, $is_ctrl:ident, $ws:literal) => (
 		impl<I: Iterator<Item=$ty>> NormalizeWhitespace<$ty, I> for I {
 			fn normalized_whitespace(mut self) -> NormalizeWhiteSpaceIter<$ty, I> {
 				// Return the iterator, starting with the first non-whitespace
 				// character.
-				let next = self.by_ref().find(|n| ! n.$is());
+				let next = self.by_ref().find(|n| ! n.$is_ws());
 				NormalizeWhiteSpaceIter {
 					iter: self,
+					normalize_control: false,
+					next,
+				}
+			}
+
+			fn normalized_control_and_whitespace(mut self)
+			-> NormalizeWhiteSpaceIter<$ty, I> {
+				// Return the iterator, starting with the first non-whitespace,
+				// non-control character.
+				let next = self.by_ref().find(|n| ! n.$is_ws() && ! n.$is_ctrl());
+				NormalizeWhiteSpaceIter {
+					iter: self,
+					normalize_control: true,
 					next,
 				}
 			}
@@ -136,29 +215,75 @@ macro_rules! iter {
 			type Item = $ty;
 
 			fn next(&mut self) -> Option<Self::Item> {
-				// Anything in the buffer?
+				// Anything in the buffer from last time? Return it!
 				if let Some(next) = self.next.take() { return Some(next); }
 
-				// Pull the next thing.
+				// Pull the next thing!
 				let next = self.iter.next()?;
-				if next.$is() {
-					// If there's something other than whitespace later on, return a
-					// single horizontal space. Otherwise we're done.
-					self.next = self.by_ref().find(|n| ! n.$is());
+
+				// Normalization required.
+				if next.$is_ws() || (self.normalize_control && next.$is_ctrl()) {
+					// Make sure there's something _after_ this that won't get
+					// normalized away, otherwise we've reached the end.
+					let ctrl = self.normalize_control;
+					self.next = self.by_ref().find(|n| ! n.$is_ws() && (! ctrl || ! n.$is_ctrl()));
 					if self.next.is_some() { Some($ws) }
 					else { None }
 				}
-				// Passthrough any non-whitespace bits.
+				// It's fine as-is.
 				else { Some(next) }
 			}
 
 			fn size_hint(&self) -> (usize, Option<usize>) {
+				// Because we're potentially dropping things, the lower limit
+				// is at most one.
+				let lower = usize::from(self.next.is_some());
 				let (_, upper) = self.iter.size_hint();
-				(0, upper)
+				(lower, upper.map(|n| n + lower))
 			}
 		}
 	);
 }
 
-iter!(char, is_whitespace, ' ');
-iter!(u8, is_ascii_whitespace, b' ');
+iter!(char, is_whitespace, is_control, ' ');
+iter!(u8, is_ascii_whitespace, is_ascii_control, b' ');
+
+
+
+#[cfg(test)]
+mod test {
+	use super::*;
+	use alloc::{
+		string::String,
+		vec::Vec,
+	};
+
+	#[test]
+	fn t_normalized_control() {
+		let example = " \0 Hello\0  Dolly. \x1b";
+		// Control is control.
+		assert_eq!(
+			example.normalized_whitespace().collect::<String>(),
+			"\0 Hello\0 Dolly. \x1b",
+		);
+
+		// Control is whitespace.
+		assert_eq!(
+			example.normalized_control_and_whitespace().collect::<String>(),
+			"Hello Dolly.",
+		);
+
+		let example = example.as_bytes();
+		// Control is control.
+		assert_eq!(
+			example.normalized_whitespace().collect::<Vec<u8>>(),
+			b"\0 Hello\0 Dolly. \x1b",
+		);
+
+		// Control is whitespace.
+		assert_eq!(
+			example.normalized_control_and_whitespace().collect::<Vec<u8>>(),
+			b"Hello Dolly.",
+		);
+	}
+}
