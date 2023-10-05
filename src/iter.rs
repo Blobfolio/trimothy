@@ -153,8 +153,11 @@ macro_rules! iter {
 			}
 
 			fn size_hint(&self) -> (usize, Option<usize>) {
+				// Because we're potentially dropping things, the lower limit
+				// is at most one.
+				let lower = usize::from(self.next.is_some());
 				let (_, upper) = self.iter.size_hint();
-				(0, upper)
+				(lower, upper.map(|n| n + lower))
 			}
 		}
 	);
