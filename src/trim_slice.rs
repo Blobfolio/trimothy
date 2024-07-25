@@ -9,6 +9,7 @@ use alloc::{
 
 
 
+#[deprecated(since = "0.2.3", note = "use newly-stable slice `trim_ascii` methods instead")]
 /// # Trim Slice.
 ///
 /// The [`TrimSlice`] trait brings basic trimming support to `&[u8]`,
