@@ -97,7 +97,10 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 	unused_extern_crates,
 	unused_import_braces,
 )]
-#![allow(clippy::module_name_repetitions)]
+#![allow(
+	clippy::module_name_repetitions,
+	deprecated, // TODO: remove when 0.3.0 is released
+)]
 
 #![no_std]
 
