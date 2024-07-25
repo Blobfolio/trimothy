@@ -1,6 +1,14 @@
 # Changelog
 
 
+## [0.2.3](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.3) - 2024-07-25
+
+### Deprecated
+
+* `TrimSlice` trait; prefer native slice `trim_ascii` methods now that they're stable
+
+
+
 ## [0.2.2](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.2) - 2023-10-04
 
 ### New
