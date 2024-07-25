@@ -1,6 +1,18 @@
 # Changelog
 
 
+## [0.3.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.0) - TBD
+
+### Changed
+
+* Bump MSRV `1.80.0`
+
+### Removed
+
+* `TrimSlice` trait
+
+
+
 ## [0.2.3](https://github.com/Blobfolio/trimothy/releases/tag/v0.2.3) - 2024-07-25
 
 ### Deprecated

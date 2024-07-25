@@ -9,7 +9,6 @@ use alloc::{
 };
 use crate::{
 	not_whitespace,
-	TrimSlice,
 	TrimSliceMatches,
 };
 
@@ -250,7 +249,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b"Hello World!"[..]));
 	/// ```
 	fn trim_mut(&mut self) {
-		let trimmed = self.trim();
+		let trimmed = self.trim_ascii();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
@@ -269,7 +268,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b"Hello World! "[..]));
 	/// ```
 	fn trim_start_mut(&mut self) {
-		let trimmed = self.trim_start();
+		let trimmed = self.trim_ascii_start();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
@@ -288,7 +287,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b" Hello World!"[..]));
 	/// ```
 	fn trim_end_mut(&mut self) {
-		let trimmed = self.trim_end();
+		let trimmed = self.trim_ascii_end();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 }

@@ -16,18 +16,6 @@ If any of these methods happened to be introduced into stable Rust in the future
 This crate is `#![no_std]`-compatible.
 
 
-
-### [`TrimSlice`]
-
-This trait adds the following basic trimming capabilities to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`, similar to those enjoyed by strings.
-
-| Method | Description |
-| ------ | ----------- |
-| `trim` | Trim leading and trailing (ASCII) whitespace. |
-| `trim_start` | Trim leading (ASCII) whitespace. |
-| `trim_end` | Trim trailing (ASCII) whitespace. |
-
-
 ### [`TrimSliceMatches`]
 
 This trait adds the arbitrary, match-based trimming methods to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`:
@@ -97,10 +85,7 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 	unused_extern_crates,
 	unused_import_braces,
 )]
-#![allow(
-	clippy::module_name_repetitions,
-	deprecated, // TODO: remove when 0.3.0 is released
-)]
+#![allow(clippy::module_name_repetitions)]
 
 #![no_std]
 
@@ -115,10 +100,7 @@ pub use trim_mut::{
 	TrimMut,
 	TrimMatchesMut,
 };
-pub use trim_slice::{
-	TrimSlice,
-	TrimSliceMatches,
-};
+pub use trim_slice::TrimSliceMatches;
 
 
 
