@@ -1,11 +1,12 @@
 # Changelog
 
 
-## [0.3.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.0) - TBD
+## [0.3.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.0) - 2024-07-29
 
 ### Changed
 
 * Bump MSRV `1.80.0`
+* Minor code tweaks
 
 ### Removed
 
