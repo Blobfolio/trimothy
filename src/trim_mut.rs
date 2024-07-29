@@ -9,7 +9,6 @@ use alloc::{
 };
 use crate::{
 	not_whitespace,
-	TrimSlice,
 	TrimSliceMatches,
 };
 
@@ -250,7 +249,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b"Hello World!"[..]));
 	/// ```
 	fn trim_mut(&mut self) {
-		let trimmed = self.trim();
+		let trimmed = self.trim_ascii();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
@@ -269,7 +268,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b"Hello World! "[..]));
 	/// ```
 	fn trim_start_mut(&mut self) {
-		let trimmed = self.trim_start();
+		let trimmed = self.trim_ascii_start();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
@@ -288,7 +287,7 @@ impl TrimMut for Box<[u8]> {
 	/// assert_eq!(v, Box::from(&b" Hello World!"[..]));
 	/// ```
 	fn trim_end_mut(&mut self) {
-		let trimmed = self.trim_end();
+		let trimmed = self.trim_ascii_end();
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 }
@@ -363,6 +362,7 @@ impl TrimMatchesMut for Box<[u8]> {
 
 
 impl TrimMut for Vec<u8> {
+	#[inline]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing (ASCII) whitespace, mutably.
@@ -381,6 +381,7 @@ impl TrimMut for Vec<u8> {
 		self.trim_start_mut();
 	}
 
+	#[inline]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading (ASCII) whitespace, mutably.
@@ -405,6 +406,7 @@ impl TrimMut for Vec<u8> {
 		else { self.truncate(0); }
 	}
 
+	#[inline]
 	/// # Trim End Mut.
 	///
 	/// Remove trailing (ASCII) whitespace, mutably.
@@ -419,10 +421,8 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b" Hello World!");
 	/// ```
 	fn trim_end_mut(&mut self) {
-		if let Some(end) = self.iter().rposition(not_whitespace) {
-			self.truncate(end + 1);
-		}
-		else { self.truncate(0); }
+		let end = self.iter().rposition(not_whitespace).map_or(0, |e| e + 1);
+		self.truncate(end);
 	}
 }
 
@@ -494,10 +494,8 @@ impl TrimMatchesMut for Vec<u8> {
 	/// ```
 	fn trim_end_matches_mut<F>(&mut self, cb: F)
 	where F: Fn(Self::MatchUnit) -> bool {
-		if let Some(end) = self.iter().rposition(|b: &u8| ! cb(*b)) {
-			self.truncate(end + 1);
-		}
-		else { self.truncate(0); }
+		let end = self.iter().rposition(|b: &u8| ! cb(*b)).map_or(0, |e| e + 1);
+		self.truncate(end);
 	}
 }
 

@@ -16,17 +16,6 @@ This crate is `#![no_std]`-compatible.
 
 
 
-### TrimSlice
-
-This trait adds the following basic trimming capabilities to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`, similar to those enjoyed by strings.
-
-| Method | Description |
-| ------ | ----------- |
-| `trim` | Trim leading and trailing (ASCII) whitespace. |
-| `trim_start` | Trim leading (ASCII) whitespace. |
-| `trim_end` | Trim trailing (ASCII) whitespace. |
-
-
 ### TrimSliceMatches
 
 This trait adds the arbitrary, match-based trimming methods to `&[u8]`, `Vec<u8>`, and `Box<[u8]>`:
@@ -79,7 +68,7 @@ The dependency can be added the normal way:
 
 ```toml
 [dependencies]
-trimothy = "0.2"
+trimothy = "0.3"
 ```
 
 

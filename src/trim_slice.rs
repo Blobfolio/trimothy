@@ -9,69 +9,6 @@ use alloc::{
 
 
 
-#[deprecated(since = "0.2.3", note = "use newly-stable slice `trim_ascii` methods instead")]
-/// # Trim Slice.
-///
-/// The [`TrimSlice`] trait brings basic trimming support to `&[u8]`,
-/// `Vec<u8>`, and `Box<[u8]>` types, very similar to the ones enjoyed by
-/// `String`/`&str`.
-///
-/// The trait methods included are:
-///
-/// | Method | Description |
-/// | ------ | ----------- |
-/// | `trim` | Trim leading and trailing (ASCII) whitespace. |
-/// | `trim_start` | Trim leading (ASCII) whitespace. |
-/// | `trim_end` | Trim trailing (ASCII) whitespace. |
-///
-/// **Note:** Because these methods work with individual bytes — rather than chars
-/// — these methods only trim [`u8::is_ascii_whitespace`], not [`char::is_whitespace`].
-pub trait TrimSlice {
-	/// # Trim.
-	///
-	/// Trim leading and trailing (ASCII) whitespace from a slice.
-	///
-	/// ## Examples
-	///
-	/// ```
-	/// use trimothy::TrimSlice;
-	///
-	/// let s: &[u8] = b" This is a slice with whitespace on the ends.\n";
-	/// assert_eq!(s.trim(), b"This is a slice with whitespace on the ends.");
-	/// ```
-	fn trim(&self) -> &[u8];
-
-	/// # Trim Start.
-	///
-	/// Trim leading (ASCII) whitespace from a slice.
-	///
-	/// ## Examples
-	///
-	/// ```
-	/// use trimothy::TrimSlice;
-	///
-	/// let s: &[u8] = b" This is a slice with whitespace on the ends.\n";
-	/// assert_eq!(s.trim_start(), b"This is a slice with whitespace on the ends.\n");
-	/// ```
-	fn trim_start(&self) -> &[u8];
-
-	/// # Trim End.
-	///
-	/// Trim trailing (ASCII) whitespace from a slice.
-	///
-	/// ## Examples
-	///
-	/// ```
-	/// use trimothy::TrimSlice;
-	///
-	/// let s: &[u8] = b" This is a slice with whitespace on the ends.\n";
-	/// assert_eq!(s.trim_end(), b" This is a slice with whitespace on the ends.");
-	/// ```
-	fn trim_end(&self) -> &[u8];
-}
-
-
-
 /// # Trim Slice (Matches).
 ///
 /// The [`TrimSliceMatches`] trait brings arbitrary match-based trimming support
@@ -132,32 +69,6 @@ pub trait TrimSliceMatches {
 
 macro_rules! trim_slice {
 	($($ty:ty),+ $(,)?) => ($(
-		impl TrimSlice for $ty {
-			#[inline]
-			/// # Trim.
-			///
-			/// Trim leading and trailing (ASCII) whitespace from a slice.
-			fn trim(&self) -> &[u8] {
-				self.trim_matches(|b| b.is_ascii_whitespace())
-			}
-
-			#[inline]
-			/// # Trim Start.
-			///
-			/// Trim leading (ASCII) whitespace from a slice.
-			fn trim_start(&self) -> &[u8] {
-				self.trim_start_matches(|b| b.is_ascii_whitespace())
-			}
-
-			#[inline]
-			/// # Trim End.
-			///
-			/// Trim trailing (ASCII) whitespace from a slice.
-			fn trim_end(&self) -> &[u8] {
-				self.trim_end_matches(|b| b.is_ascii_whitespace())
-			}
-		}
-
 		impl TrimSliceMatches for $ty {
 			/// # Trim Matches.
 			///
@@ -236,13 +147,13 @@ mod tests {
 		for (raw, expected) in tests.iter() {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
-			assert_eq!(a.trim(), b);
+			assert_eq!(a.trim_ascii(), b);
 
 			let a = a.to_vec();
-			assert_eq!(a.trim(), b);
+			assert_eq!(a.trim_ascii(), b);
 
 			let a = a.into_boxed_slice();
-			assert_eq!(a.trim(), b);
+			assert_eq!(a.trim_ascii(), b);
 		}
 
 		assert_eq!(T_EMPTY.trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
@@ -259,7 +170,7 @@ mod tests {
 
 		// This should also work on arrays.
 		let arr: [u8; 5] = [b' ', b' ', b'.', b' ', b' '];
-		assert_eq!(arr.trim(), &[b'.']);
+		assert_eq!(arr.trim_ascii(), &[b'.']);
 	}
 
 	#[test]
@@ -276,13 +187,13 @@ mod tests {
 		for (raw, expected) in tests.iter() {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
-			assert_eq!(a.trim_start(), b);
+			assert_eq!(a.trim_ascii_start(), b);
 
 			let a = a.to_vec();
-			assert_eq!(a.trim_start(), b);
+			assert_eq!(a.trim_ascii_start(), b);
 
 			let a = a.into_boxed_slice();
-			assert_eq!(a.trim_start(), b);
+			assert_eq!(a.trim_ascii_start(), b);
 		}
 
 		assert_eq!(T_EMPTY.trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
@@ -312,13 +223,13 @@ mod tests {
 		for (raw, expected) in tests.iter() {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
-			assert_eq!(a.trim_end(), b);
+			assert_eq!(a.trim_ascii_end(), b);
 
 			let a = a.to_vec();
-			assert_eq!(a.trim_end(), b);
+			assert_eq!(a.trim_ascii_end(), b);
 
 			let a = a.into_boxed_slice();
-			assert_eq!(a.trim_end(), b);
+			assert_eq!(a.trim_ascii_end(), b);
 		}
 
 		assert_eq!(T_EMPTY.trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
