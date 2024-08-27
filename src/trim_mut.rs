@@ -526,15 +526,15 @@ mod tests {
 			v2.trim_start_mut();
 			assert_eq!(v2, v.trim_start());
 
-			v2 = v.to_owned();
+			v.clone_into(&mut v2);
 			v2.trim_end_mut();
 			assert_eq!(v2, v.trim_end());
 
-			v2 = v.to_owned();
+			v.clone_into(&mut v2);
 			v2.trim_mut();
 			assert_eq!(v2, v.trim());
 
-			v2 = v.to_owned();
+			v.clone_into(&mut v2);
 			v2.trim_matches_mut(|c| c == '\t');
 			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
 		}

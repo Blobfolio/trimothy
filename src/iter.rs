@@ -174,8 +174,16 @@ impl<'a> NormalizeWhitespace<char, Chars<'a>> for &'a str {
 /// This is the actual iterator returned by a
 /// `NormalizeWhitespace::normalized_whitespace` implementation.
 pub struct NormalizeWhiteSpaceIter<T: Copy + Sized, I: Iterator<Item=T>> {
+	/// # Iterator.
 	iter: I,
+
+	/// # Normalize Control Characters?
 	normalize_control: bool,
+
+	/// # Next Buffer.
+	///
+	/// This holds extra values from a previous pass, ensuring nothing gets
+	/// missed due to peeking, etc.
 	next: Option<T>,
 }
 

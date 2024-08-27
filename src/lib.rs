@@ -64,28 +64,54 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 
 #![forbid(unsafe_code)]
 
+#![deny(
+	// TODO: clippy::allow_attributes_without_reason,
+	clippy::correctness,
+	unreachable_pub,
+)]
+
 #![warn(
-	clippy::filetype_is_file,
-	clippy::integer_division,
-	clippy::needless_borrow,
+	clippy::complexity,
 	clippy::nursery,
 	clippy::pedantic,
 	clippy::perf,
-	clippy::suboptimal_flops,
+	clippy::style,
+
+	// TODO: clippy::allow_attributes,
+	clippy::clone_on_ref_ptr,
+	clippy::create_dir,
+	clippy::filetype_is_file,
+	clippy::format_push_string,
+	clippy::get_unwrap,
+	clippy::impl_trait_in_params,
+	clippy::lossy_float_literal,
+	clippy::missing_assert_message,
+	clippy::missing_docs_in_private_items,
+	clippy::needless_raw_strings,
+	clippy::panic_in_result_fn,
+	clippy::pub_without_shorthand,
+	clippy::rest_pat_in_fully_bound_structs,
+	clippy::semicolon_inside_block,
+	clippy::str_to_string,
+	clippy::string_to_string,
+	clippy::todo,
+	clippy::undocumented_unsafe_blocks,
 	clippy::unneeded_field_pattern,
+	clippy::unseparated_literal_suffix,
+	clippy::unwrap_in_result,
+
 	macro_use_extern_crate,
 	missing_copy_implementations,
-	missing_debug_implementations,
 	missing_docs,
 	non_ascii_idents,
 	trivial_casts,
 	trivial_numeric_casts,
-	unreachable_pub,
 	unused_crate_dependencies,
 	unused_extern_crates,
 	unused_import_braces,
 )]
-#![allow(clippy::module_name_repetitions)]
+
+#![allow(clippy::module_name_repetitions)] // Repetition is preferred.
 
 #![no_std]
 
@@ -104,7 +130,7 @@ pub use trim_slice::TrimSliceMatches;
 
 
 
-#[allow(clippy::trivially_copy_pass_by_ref)] // It's the signature iterator wants.
+#[allow(clippy::trivially_copy_pass_by_ref)] // This signature is required.
 #[inline]
 /// # Not Whitespace.
 ///
