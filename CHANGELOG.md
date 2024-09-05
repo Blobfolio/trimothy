@@ -1,6 +1,16 @@
 # Changelog
 
 
+
+## [0.3.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.1) - 2024-09-05
+
+### Changed
+
+* Miscellaneous code cleanup and lints
+* Bump `brunch` to `0.6`
+
+
+
 ## [0.3.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.0) - 2024-07-29
 
 ### Changed

@@ -67,6 +67,7 @@ pub trait TrimSliceMatches {
 }
 
 
+/// # Helper: Trim Slice Matches.
 macro_rules! trim_slice {
 	($($ty:ty),+ $(,)?) => ($(
 		impl TrimSliceMatches for $ty {
@@ -144,7 +145,7 @@ mod tests {
 			("\n  hello world! \t", "hello world!"),
 		];
 
-		for (raw, expected) in tests.iter() {
+		for (raw, expected) in &tests {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
 			assert_eq!(a.trim_ascii(), b);
@@ -160,8 +161,8 @@ mod tests {
 		assert_eq!(T_EMPTY.to_vec().trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from(T_EMPTY).trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
-		assert_eq!("  ".as_bytes().trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
-		assert_eq!("  ".as_bytes().to_vec().trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".to_vec().trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from("  ".as_bytes()).trim_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
 		assert_eq!(T_HELLO_E.trim_matches(|b| b'h' == b), b"ello\t");
@@ -184,7 +185,7 @@ mod tests {
 			("\n  hello world! \t", "hello world! \t"),
 		];
 
-		for (raw, expected) in tests.iter() {
+		for (raw, expected) in &tests {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
 			assert_eq!(a.trim_ascii_start(), b);
@@ -200,8 +201,8 @@ mod tests {
 		assert_eq!(T_EMPTY.to_vec().trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from(T_EMPTY).trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
-		assert_eq!("  ".as_bytes().trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
-		assert_eq!("  ".as_bytes().to_vec().trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".to_vec().trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from("  ".as_bytes()).trim_start_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
 		assert_eq!(T_HELLO_E.trim_start_matches(|b| b'h' == b), b"ello\t");
@@ -220,7 +221,7 @@ mod tests {
 			("\n  hello world! \t", "\n  hello world!"),
 		];
 
-		for (raw, expected) in tests.iter() {
+		for (raw, expected) in &tests {
 			let a = raw.as_bytes();
 			let b = expected.as_bytes();
 			assert_eq!(a.trim_ascii_end(), b);
@@ -236,8 +237,8 @@ mod tests {
 		assert_eq!(T_EMPTY.to_vec().trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from(T_EMPTY).trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
-		assert_eq!("  ".as_bytes().trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
-		assert_eq!("  ".as_bytes().to_vec().trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
+		assert_eq!(b"  ".to_vec().trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 		assert_eq!(Box::<[u8]>::from("  ".as_bytes()).trim_end_matches(|b| b.is_ascii_whitespace()), T_EMPTY);
 
 		assert_eq!(T_HELLO_E.trim_matches(|b| b'\t' == b), T_HELLO);
