@@ -9,6 +9,7 @@ use alloc::{
 };
 use crate::{
 	not_whitespace,
+	pattern::MatchPattern,
 	TrimSliceMatches,
 };
 
@@ -63,13 +64,17 @@ pub trait TrimMut {
 ///
 /// | Method | Description |
 /// | ------ | ----------- |
-/// | `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback (mutably). |
-/// | `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
-/// | `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
+/// | `trim_matches_mut` | Trim arbitrary leading and trailing bytes (mutably). |
+/// | `trim_start_matches_mut` | Trim arbitrary leading bytes (mutably). |
+/// | `trim_end_matches_mut` | Trim arbitrary trailing bytes (mutably). |
 ///
-/// **Note:** To maintain consistency with their immutable counterparts, the
-/// `String` implementation expects callbacks that match a `char`, while the
-/// `Vec<u8>` and `Box<[u8]>` implementations expect callbacks that match a `u8`.
+/// Each of these match methods accept either:
+/// * A single T;
+/// * An array or slice of T;
+/// * A `&BtreeSet<T>`
+/// * A custom callback with signature `Fn(T) -> bool`
+///
+/// Where T is `char` for `String`, and `u8` for `Vec<u8>`/`Box<[u8]>`.
 ///
 /// Refer to the individual implementations for examples.
 pub trait TrimMatchesMut {
@@ -77,31 +82,25 @@ pub trait TrimMatchesMut {
 	///
 	/// This is the "unit" type of the collection, e.g. `char` for `String`,
 	/// `u8` for slices, etc.
-	type MatchUnit;
+	type MatchUnit: Copy + Eq;
 
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
-	/// callback, where a return value of `true` means trim. Refer to the
-	/// individual implementations for examples.
-	fn trim_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool;
+	/// pattern. Refer to the individual implementations for examples.
+	fn trim_matches_mut<P: MatchPattern<Self::MatchUnit>>(&mut self, pat: P);
 
 	/// # Trim Start Matches Mut.
 	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
-	fn trim_start_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool;
+	/// Trim arbitrary leading bytes as determined by the provided
+	/// pattern. Refer to the individual implementations for examples.
+	fn trim_start_matches_mut<P: MatchPattern<Self::MatchUnit>>(&mut self, pat: P);
 
 	/// # Trim End Matches Mut.
 	///
-	/// Trim arbitrary trailing bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
-	fn trim_end_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool;
+	/// Trim arbitrary trailing bytes as determined by the provided
+	/// pattern. Refer to the individual implementations for examples.
+	fn trim_end_matches_mut<P: MatchPattern<Self::MatchUnit>>(&mut self, pat: P);
 }
 
 
@@ -167,9 +166,12 @@ impl TrimMatchesMut for String {
 
 	/// # Trim Matches Mut.
 	///
-	/// Trim arbitrary leading and trailing bytes as determined by the provided
-	/// callback, where a return value of `true` means trim. Refer to the
-	/// individual implementations for examples.
+	/// Trim arbitrary leading and trailing chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -179,18 +181,25 @@ impl TrimMatchesMut for String {
 	/// let mut s = String::from(" Hello World! ");
 	/// s.trim_matches_mut(|c: char| ' ' == c || 'H' == c);
 	/// assert_eq!(s, "ello World!");
+	///
+	/// let mut s = String::from(" Hello World! ");
+	/// s.trim_matches_mut([' ', 'H']); // An array works too.
+	/// assert_eq!(s, "ello World!");
 	/// ```
-	fn trim_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		self.trim_end_matches_mut(&cb);
-		self.trim_start_matches_mut(cb);
+	fn trim_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		self.trim_end_matches_mut(pat);
+		self.trim_start_matches_mut(pat);
 	}
 
+	#[inline]
 	/// # Trim Start Matches Mut.
 	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary leading chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -200,20 +209,27 @@ impl TrimMatchesMut for String {
 	/// let mut s = String::from(" Hello World! ");
 	/// s.trim_start_matches_mut(|c: char| ' ' == c || 'H' == c);
 	/// assert_eq!(s, "ello World! ");
+	///
+	/// let mut s = String::from(" Hello World! ");
+	/// s.trim_start_matches_mut([' ', 'H']); // An array works too.
+	/// assert_eq!(s, "ello World! ");
 	/// ```
-	fn trim_start_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		if let Some(start) = self.find(|c| ! cb(c)) {
-			if start != 0 { self.drain(..start); }
+	fn trim_start_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		if let Some(start) = self.find(#[inline(always)] |c| ! pat.is_match(c)) {
+			if start != 0 { self.replace_range(..start, ""); }
 		}
 		else { self.truncate(0); }
 	}
 
+	#[inline]
 	/// # Trim End Matches Mut.
 	///
-	/// Trim arbitrary trailing bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary trailing chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -223,10 +239,13 @@ impl TrimMatchesMut for String {
 	/// let mut s = String::from(" Hello WorlÐ! ");
 	/// s.trim_end_matches_mut(|c: char| ' ' == c || '!' == c);
 	/// assert_eq!(s, " Hello WorlÐ");
+	///
+	/// let mut s = String::from(" Hello WorlÐ! ");
+	/// s.trim_end_matches_mut([' ', '!']); // An array works too.
+	/// assert_eq!(s, " Hello WorlÐ");
 	/// ```
-	fn trim_end_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed_len = self.trim_end_matches(cb).len();
+	fn trim_end_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		let trimmed_len = self.trim_end_matches(#[inline(always)] |c| pat.is_match(c)).len();
 		self.truncate(trimmed_len);
 	}
 }
@@ -295,11 +314,15 @@ impl TrimMut for Box<[u8]> {
 impl TrimMatchesMut for Box<[u8]> {
 	type MatchUnit = u8;
 
+	#[inline]
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
-	/// callback, where a return value of `true` means trim. Refer to the
-	/// individual implementations for examples.
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -310,17 +333,20 @@ impl TrimMatchesMut for Box<[u8]> {
 	/// v.trim_matches_mut(|b: u8| b'!' == b || b.is_ascii_whitespace());
 	/// assert_eq!(v, Box::from(&b"Hello World"[..]));
 	/// ```
-	fn trim_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_matches(cb);
+	fn trim_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		let trimmed = self.trim_matches(pat);
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
+	#[inline]
 	/// # Trim Start Matches Mut.
 	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary leading bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -331,17 +357,20 @@ impl TrimMatchesMut for Box<[u8]> {
 	/// v.trim_start_matches_mut(|b: u8| b'!' == b || b.is_ascii_whitespace());
 	/// assert_eq!(v, Box::from(&b"Hello World! "[..]));
 	/// ```
-	fn trim_start_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_start_matches(cb);
+	fn trim_start_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		let trimmed = self.trim_start_matches(pat);
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
+	#[inline]
 	/// # Trim End Matches Mut.
 	///
-	/// Trim arbitrary trailing bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary trailing bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -352,9 +381,8 @@ impl TrimMatchesMut for Box<[u8]> {
 	/// v.trim_end_matches_mut(|b: u8| b'!' == b || b.is_ascii_whitespace());
 	/// assert_eq!(v, Box::from(&b" Hello World"[..]));
 	/// ```
-	fn trim_end_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		let trimmed = self.trim_end_matches(cb);
+	fn trim_end_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		let trimmed = self.trim_end_matches(pat);
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 }
@@ -362,7 +390,6 @@ impl TrimMatchesMut for Box<[u8]> {
 
 
 impl TrimMut for Vec<u8> {
-	#[inline]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing (ASCII) whitespace, mutably.
@@ -432,8 +459,11 @@ impl TrimMatchesMut for Vec<u8> {
 	/// # Trim Matches Mut.
 	///
 	/// Trim arbitrary leading and trailing bytes as determined by the provided
-	/// callback, where a return value of `true` means trim. Refer to the
-	/// individual implementations for examples.
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -444,17 +474,19 @@ impl TrimMatchesMut for Vec<u8> {
 	/// v.trim_matches_mut(|b: u8| b.is_ascii_whitespace() || b.is_ascii_uppercase());
 	/// assert_eq!(v, b"ello World!");
 	/// ```
-	fn trim_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		self.trim_end_matches_mut(&cb);
-		self.trim_start_matches_mut(cb);
+	fn trim_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		self.trim_end_matches_mut(pat);
+		self.trim_start_matches_mut(pat);
 	}
 
 	/// # Trim Start Matches Mut.
 	///
-	/// Trim arbitrary leading bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary leading bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -465,9 +497,8 @@ impl TrimMatchesMut for Vec<u8> {
 	/// v.trim_start_matches_mut(|b: u8| b.is_ascii_whitespace() || b.is_ascii_uppercase());
 	/// assert_eq!(v, b"ello World! ");
 	/// ```
-	fn trim_start_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		if let Some(start) = self.iter().position(|b: &u8| ! cb(*b)) {
+	fn trim_start_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		if let Some(start) = self.iter().copied().position(#[inline(always)] |b| ! pat.is_match(b)) {
 			if 0 != start {
 				let trimmed_len = self.len() - start;
 				self.copy_within(start.., 0);
@@ -479,9 +510,12 @@ impl TrimMatchesMut for Vec<u8> {
 
 	/// # Trim End Matches Mut.
 	///
-	/// Trim arbitrary trailing bytes as determined by the provided callback,
-	/// where a return value of `true` means trim. Refer to the individual
-	/// implementations for examples.
+	/// Trim arbitrary trailing bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
 	///
 	/// ## Examples
 	///
@@ -492,9 +526,11 @@ impl TrimMatchesMut for Vec<u8> {
 	/// v.trim_end_matches_mut(|b: u8| b.is_ascii_whitespace() || b.is_ascii_uppercase());
 	/// assert_eq!(v, b" Hello World!");
 	/// ```
-	fn trim_end_matches_mut<F>(&mut self, cb: F)
-	where F: Fn(Self::MatchUnit) -> bool {
-		let end = self.iter().rposition(|b: &u8| ! cb(*b)).map_or(0, |e| e + 1);
+	fn trim_end_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		let end = self.iter()
+			.copied()
+			.rposition(#[inline(always)] |b| ! pat.is_match(b))
+			.map_or(0, |e| e + 1);
 		self.truncate(end);
 	}
 }
@@ -536,6 +572,18 @@ mod tests {
 
 			v.clone_into(&mut v2);
 			v2.trim_matches_mut(|c| c == '\t');
+			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
+
+			v.clone_into(&mut v2);
+			v2.trim_matches_mut('\t');
+			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
+
+			v.clone_into(&mut v2);
+			v2.trim_matches_mut(['\t']);
+			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
+
+			v.clone_into(&mut v2);
+			v2.trim_matches_mut(&['\t']);
 			assert_eq!(v2, v.trim_matches(|c| c == '\t'));
 		}
 	}
