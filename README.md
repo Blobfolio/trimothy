@@ -83,5 +83,5 @@ The dependency can be added the normal way:
 
 ```toml
 [dependencies]
-trimothy = "0.3"
+trimothy = "0.4"
 ```
