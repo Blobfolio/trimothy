@@ -16,7 +16,7 @@ use alloc::collections::BTreeSet;
 /// * An array or slice of T;
 /// * A `&BTreeSet<T>`;
 /// * A custom callback with signature `Fn(T) -> bool`;
-pub trait MatchPattern<T: Copy + Eq>: Copy {
+pub trait MatchPattern<T: Copy + Eq + Sized>: Copy + Sized {
 	/// # Is Match?
 	///
 	/// Returns `true` if `thing` should be trimmed.
@@ -25,43 +25,43 @@ pub trait MatchPattern<T: Copy + Eq>: Copy {
 
 
 
-impl<T: Copy + Eq> MatchPattern<T> for T {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for T {
 	#[inline]
 	/// # Match Self.
 	fn is_match(self, thing: T) -> bool { self == thing }
 }
 
-impl<T: Copy + Eq> MatchPattern<T> for &[T] {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for &[T] {
 	#[inline]
 	/// # Match Slice.
 	fn is_match(self, thing: T) -> bool { self.contains(&thing) }
 }
 
-impl<T: Copy + Eq + Ord> MatchPattern<T> for &BTreeSet<T> {
+impl<T: Copy + Eq + Sized + Ord> MatchPattern<T> for &BTreeSet<T> {
 	#[inline]
 	/// # Match Set.
 	fn is_match(self, thing: T) -> bool { self.contains(&thing) }
 }
 
-impl<T: Copy + Eq> MatchPattern<T> for [T; 1] {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for [T; 1] {
 	#[inline]
 	/// # Match Array of One.
 	fn is_match(self, thing: T) -> bool { self[0] == thing }
 }
 
-impl<T: Copy + Eq> MatchPattern<T> for &[T; 1] {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for &[T; 1] {
 	#[inline]
 	/// # Match Array of One.
 	fn is_match(self, thing: T) -> bool { self[0] == thing }
 }
 
-impl<T: Copy + Eq> MatchPattern<T> for [T; 2] {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for [T; 2] {
 	#[inline]
 	/// # Match Array of Two.
 	fn is_match(self, thing: T) -> bool { self[0] == thing || self[1] == thing }
 }
 
-impl<T: Copy + Eq> MatchPattern<T> for &[T; 2] {
+impl<T: Copy + Eq + Sized> MatchPattern<T> for &[T; 2] {
 	#[inline]
 	/// # Match Array of Two.
 	fn is_match(self, thing: T) -> bool { self[0] == thing || self[1] == thing }
@@ -89,12 +89,12 @@ impl<F: Fn(char) -> bool + Copy> MatchPattern<char> for F {
 /// # Helper: 3+ Array Implementations.
 macro_rules! arr {
 	($($size:literal),+ $(,)?) => ($(
-		impl<T: Copy + Eq> MatchPattern<T> for [T; $size] {
+		impl<T: Copy + Eq + Sized> MatchPattern<T> for [T; $size] {
 			#[inline]
 			/// # Array Match.
 			fn is_match(self, thing: T) -> bool { self.contains(&thing) }
 		}
-		impl<T: Copy + Eq> MatchPattern<T> for &[T; $size] {
+		impl<T: Copy + Eq + Sized> MatchPattern<T> for &[T; $size] {
 			#[inline]
 			/// # Array Match.
 			fn is_match(self, thing: T) -> bool { self.contains(&thing) }

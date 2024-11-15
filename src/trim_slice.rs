@@ -162,6 +162,7 @@ trim_slice!([u8], Box<[u8]>, Vec<u8>);
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use alloc::collections::BTreeSet;
 	use brunch as _;
 
 	const T_EMPTY: &[u8] = b"";
@@ -207,6 +208,11 @@ mod tests {
 		assert_eq!(T_HELLO_E.to_vec().trim_matches(b'h'), b"ello\t");
 		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_matches(b'h'), b"ello\t");
 
+		let set = BTreeSet::from([b'h']);
+		assert_eq!(T_HELLO_E.trim_matches(&set), b"ello\t");
+		assert_eq!(T_HELLO_E.to_vec().trim_matches(&set), b"ello\t");
+		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_matches(&set), b"ello\t");
+
 		// This should also work on arrays.
 		let arr: [u8; 5] = [b' ', b' ', b'.', b' ', b' '];
 		assert_eq!(arr.trim_ascii(), &[b'.']);
@@ -250,6 +256,11 @@ mod tests {
 		assert_eq!(T_HELLO_E.trim_start_matches(b'h'), b"ello\t");
 		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_start_matches(b'h'), b"ello\t");
 		assert_eq!(T_HELLO_E.to_vec().trim_start_matches(b'h'), b"ello\t");
+
+		let set = BTreeSet::from([b'h']);
+		assert_eq!(T_HELLO_E.trim_start_matches(&set), b"ello\t");
+		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_start_matches(&set), b"ello\t");
+		assert_eq!(T_HELLO_E.to_vec().trim_start_matches(&set), b"ello\t");
 	}
 
 	#[test]
@@ -290,5 +301,10 @@ mod tests {
 		assert_eq!(T_HELLO_E.trim_matches(b'\t'), T_HELLO);
 		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_matches(b'\t'), T_HELLO);
 		assert_eq!(T_HELLO_E.to_vec().trim_matches(b'\t'), T_HELLO);
+
+		let set = BTreeSet::from([b'\t']);
+		assert_eq!(T_HELLO_E.trim_matches(&set), T_HELLO);
+		assert_eq!(Box::<[u8]>::from(T_HELLO_E).trim_matches(&set), T_HELLO);
+		assert_eq!(T_HELLO_E.to_vec().trim_matches(&set), T_HELLO);
 	}
 }
