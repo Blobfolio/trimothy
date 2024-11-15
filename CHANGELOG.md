@@ -12,6 +12,7 @@
   * A `&BTreeSet<T>`;
   * A custom callback with signature `Fn(T) -> bool`;
     * Callbacks now require `Copy`;
+* Bump MSRV to `1.81`
 
 
 

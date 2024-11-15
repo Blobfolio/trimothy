@@ -79,7 +79,7 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 #![forbid(unsafe_code)]
 
 #![deny(
-	// TODO: clippy::allow_attributes_without_reason,
+	clippy::allow_attributes_without_reason,
 	clippy::correctness,
 	unreachable_pub,
 )]
@@ -91,7 +91,7 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 	clippy::perf,
 	clippy::style,
 
-	// TODO: clippy::allow_attributes,
+	clippy::allow_attributes,
 	clippy::clone_on_ref_ptr,
 	clippy::create_dir,
 	clippy::filetype_is_file,
@@ -125,7 +125,7 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 	unused_import_braces,
 )]
 
-#![allow(clippy::module_name_repetitions)] // Repetition is preferred.
+#![expect(clippy::module_name_repetitions, reason = "Repetition is preferred.")]
 
 #![no_std]
 
@@ -145,7 +145,7 @@ pub use trim_slice::TrimSliceMatches;
 
 
 
-#[allow(clippy::trivially_copy_pass_by_ref)] // This signature is required.
+#[expect(clippy::trivially_copy_pass_by_ref, reason = "This signature is required.")]
 #[inline]
 /// # Not Whitespace.
 ///
