@@ -22,9 +22,15 @@ This trait adds the arbitrary, match-based trimming methods to `&[u8]`, `Vec<u8>
 
 | Method | Description |
 | ------ | ----------- |
-| `trim_matches` | Trim arbitrary leading and trailing bytes via callback. |
-| `trim_start_matches` | Trim arbitrary leading bytes via callback. |
-| `trim_end_matches` | Trim arbitrary trailing bytes via callback. |
+| `trim_matches` | Trim arbitrary leading and trailing bytes. |
+| `trim_start_matches` | Trim arbitrary leading bytes. |
+| `trim_end_matches` | Trim arbitrary trailing bytes. |
+
+Each of these match methods accept either:
+* A single `u8`;
+* An array or slice of `u8`;
+* A `&BtreeSet<u8>`
+* A custom callback with signature `Fn(u8) -> bool`
 
 
 ### TrimMut
@@ -44,9 +50,18 @@ This trait brings _mutable_ match-based trimming `String`, `Vec<u8>`, and `Box<[
 
 | Method | Description |
 | ------ | ----------- |
-| `trim_matches_mut` | Trim arbitrary leading and trailing bytes via callback (mutably). |
-| `trim_start_matches_mut` | Trim arbitrary leading bytes via callback (mutably). |
-| `trim_end_matches_mut` | Trim arbitrary trailing bytes via callback (mutably). |
+| `trim_matches_mut` | Trim arbitrary leading and trailing bytes (mutably). |
+| `trim_start_matches_mut` | Trim arbitrary leading bytes (mutably). |
+| `trim_end_matches_mut` | Trim arbitrary trailing bytes (mutably). |
+
+
+Each of these match methods accept either:
+* A single T;
+* An array or slice of T;
+* A `&BtreeSet<T>`
+* A custom callback with signature `Fn(T) -> bool`
+
+Where T is `char` for `String`, and `u8` for `Vec<u8>`/`Box<[u8]>`.
 
 
 ### NormalizeWhitespace
@@ -68,27 +83,5 @@ The dependency can be added the normal way:
 
 ```toml
 [dependencies]
-trimothy = "0.3"
+trimothy = "0.4"
 ```
-
-
-
-## License
-
-Copyright © 2024 [Blobfolio, LLC](https://blobfolio.com) &lt;hello@blobfolio.com&gt;
-
-This work is free. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2.
-
-    DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-    Version 2, December 2004
-    
-    Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
-    
-    Everyone is permitted to copy and distribute verbatim or modified
-    copies of this license document, and changing it is allowed as long
-    as the name is changed.
-    
-    DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-    
-    0. You just DO WHAT THE FUCK YOU WANT TO.

@@ -2,6 +2,20 @@
 
 
 
+## [0.4.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.4.0) - 2024-11-15
+
+### Changed
+
+* `trim_mut`, `trim_start_mut`, and `trim_end_mut` have been generalized to accept any of the following:
+  * A single T;
+  * An array or slice of T;
+  * A `&BTreeSet<T>`;
+  * A custom callback with signature `Fn(T) -> bool`;
+    * Callbacks now require `Copy`;
+* Bump MSRV to `1.81`
+
+
+
 ## [0.3.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.3.1) - 2024-09-05
 
 ### Changed

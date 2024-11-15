@@ -1,9 +1,9 @@
 [package]
 name = "trimothy"
-version = "0.3.1"
-authors = ["Blobfolio, LLC. <hello@blobfolio.com>"]
+version = "0.4.0"
+authors = ["Josh Stoik <josh@blobfolio.com>"]
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.81"
 description = "Traits for trimming slices, vecs, and strings."
 license = "WTFPL"
 repository = "https://github.com/Blobfolio/trimothy"
@@ -20,9 +20,6 @@ exclude = [
 
 [package.metadata.bashman]
 name = "Trimothy"
-bash-dir = "./"
-man-dir = "./"
-credits-dir = "./"
 
 [dev-dependencies]
 brunch = "0.6.*"
