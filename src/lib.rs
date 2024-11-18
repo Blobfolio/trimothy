@@ -60,20 +60,21 @@ Each of these match methods accept either:
 * A `&BtreeSet<T>`
 * A custom callback with signature `Fn(T) -> bool`
 
-Where T is `char` for `String`, and `u8` for `Vec<u8>`/`Box<[u8]>`.
+Where T is `char` for string sources, and `u8` for byte sources.
 
 
 
-### [`NormalizeWhitespace`]
+### [`TrimNormal`]
 
-This trait exposes an iterator over byte/string slice contents that trims the edges and compacts/converts all inner, contiguous spans of whitespace to a single horizontal space.
-
-This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` items.
+This trait adds a single `trim_and_normalize` method to owned and borrowed string and byte slices that trims leading/trailing whitespace, and compacts/normalizes spans of _inner_ whitespace to a single horizontal space.
 
 | Method | Description |
 | ------ | ----------- |
-| `normalized_whitespace` | Return a whitespace-normalizing iterator. |
-| `normalized_control_and_whitespace` | Return a control- and whitespace-normalizing iterator. |
+| `trim_and_normalize` | Trim, normalize, and return. |
+
+The [`TrimNormalBytes`] and [`TrimNormalChars`] traits can be used to extend
+this same functionality to arbitrary iterators of `u8` and `char`,
+respectively.
 */
 
 #![forbid(unsafe_code)]
@@ -131,24 +132,18 @@ This trait is implemented for `&[u8]`, `&str`, and `Iterator`s with `u8`/`char` 
 
 extern crate alloc;
 
-mod iter;
 mod pattern;
 mod trim_mut;
+mod trim_normal;
 mod trim_slice;
 
-pub use iter::NormalizeWhitespace;
 pub use trim_mut::{
 	TrimMut,
 	TrimMatchesMut,
 };
+pub use trim_normal::{
+	TrimNormal,
+	TrimNormalBytes,
+	TrimNormalChars,
+};
 pub use trim_slice::TrimSliceMatches;
-
-
-
-#[expect(clippy::trivially_copy_pass_by_ref, reason = "This signature is required.")]
-#[inline]
-/// # Not Whitespace.
-///
-/// This callback is used to find the first or last non-whitespace byte in a
-/// slice. It is only split off into its own method to enforce consistency.
-pub(crate) const fn not_whitespace(b: &u8) -> bool { ! b.is_ascii_whitespace() }

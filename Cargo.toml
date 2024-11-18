@@ -25,9 +25,13 @@ name = "Trimothy"
 brunch = "0.6.*"
 
 [[bench]]
-name = "fn_trim_slice"
+name = "fn_trim_mut"
 harness = false
 
 [[bench]]
-name = "fn_trim_mut"
+name = "fn_trim_normal"
+harness = false
+
+[[bench]]
+name = "fn_trim_slice"
 harness = false

@@ -1,5 +1,5 @@
 /*!
-# Benchmark: Trim Slice
+# Benchmark: Trim Mut
 */
 
 use brunch::{
@@ -25,5 +25,5 @@ benches!(
 		.run_seeded(STR.to_owned(), |mut s| s.trim_mut()),
 
 	Bench::new("String.trim()::to_owned()")
-		.run_seeded(STR.to_owned(), |s| s.trim().to_owned()),
+		.run(|| STR.trim().to_owned()),
 );

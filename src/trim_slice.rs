@@ -1,5 +1,5 @@
 /*!
-# Trimothy - Trim Slice
+# Trimothy: Trim Slice
 */
 
 use alloc::{
