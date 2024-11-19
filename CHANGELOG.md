@@ -2,6 +2,20 @@
 
 
 
+## [0.5.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.5.0) - 2024-11-19
+
+### New
+
+* `TrimNormal` trait
+* `TrimNormalBytes` trait
+* `TrimNormalChars` trait
+
+### Removed
+
+* `NormalizeWhitespace` (use a `TrimNormal` trait instead)
+
+
+
 ## [0.4.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.4.0) - 2024-11-15
 
 ### Changed

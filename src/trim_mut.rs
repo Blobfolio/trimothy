@@ -1,5 +1,5 @@
 /*!
-# Trimothy - Mutable Trim
+# Trimothy: Mutable Trim
 */
 
 use alloc::{
@@ -8,7 +8,6 @@ use alloc::{
 	vec::Vec,
 };
 use crate::{
-	not_whitespace,
 	pattern::MatchPattern,
 	TrimSliceMatches,
 };
@@ -28,9 +27,9 @@ use crate::{
 /// | `trim_start_mut` | Trim leading whitespace (mutably). |
 /// | `trim_end_mut` | Trim trailing whitespace (mutably). |
 ///
-/// **Note:** The behaviors of these methods are consistent with their immutable
-/// counterparts, meaning that Strings will trim [`char::is_whitespace`], while
-/// slices will only trim [`u8::is_ascii_whitespace`].
+/// In keeping with the rest of the library, "whitespace" here means
+/// [`char::is_whitespace`] for string sources, and [`u8::is_ascii_whitespace`]
+/// for byte sources.
 ///
 /// Refer to the individual implementations for examples.
 pub trait TrimMut {
@@ -74,7 +73,7 @@ pub trait TrimMut {
 /// * A `&BtreeSet<T>`
 /// * A custom callback with signature `Fn(T) -> bool`
 ///
-/// Where T is `char` for `String`, and `u8` for `Vec<u8>`/`Box<[u8]>`.
+/// Where T is `char` for string sources, and `u8` for byte sources.
 ///
 /// Refer to the individual implementations for examples.
 pub trait TrimMatchesMut {
@@ -82,7 +81,7 @@ pub trait TrimMatchesMut {
 	///
 	/// This is the "unit" type of the collection, e.g. `char` for `String`,
 	/// `u8` for slices, etc.
-	type MatchUnit: Copy + Eq;
+	type MatchUnit: Copy + Eq + Ord + Sized;
 
 	/// # Trim Matches Mut.
 	///
@@ -106,7 +105,6 @@ pub trait TrimMatchesMut {
 
 
 impl TrimMut for String {
-	#[inline]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing whitespace, mutably.
@@ -121,7 +119,8 @@ impl TrimMut for String {
 	/// assert_eq!(s, "Hello World!");
 	/// ```
 	fn trim_mut(&mut self) {
-		self.trim_matches_mut(char::is_whitespace);
+		self.trim_end_matches_mut(char::is_whitespace);
+		self.trim_start_matches_mut(char::is_whitespace);
 	}
 
 	#[inline]
@@ -253,6 +252,7 @@ impl TrimMatchesMut for String {
 
 
 impl TrimMut for Box<[u8]> {
+	#[inline]
 	/// # Trim Mut.
 	///
 	/// Remove leading and trailing (ASCII) whitespace, replacing `Self` with
@@ -272,6 +272,7 @@ impl TrimMut for Box<[u8]> {
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
+	#[inline]
 	/// # Trim Start Mut.
 	///
 	/// Remove leading (ASCII) whitespace, replacing `Self` with a new boxed
@@ -291,6 +292,7 @@ impl TrimMut for Box<[u8]> {
 		if trimmed.len() < self.len() { *self = Self::from(trimmed); }
 	}
 
+	#[inline]
 	/// # Trim End Mut.
 	///
 	/// Remove trailing (ASCII) whitespace, replacing `Self` with a new boxed
@@ -423,14 +425,13 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b"Hello World! ");
 	/// ```
 	fn trim_start_mut(&mut self) {
-		if let Some(start) = self.iter().position(not_whitespace) {
-			if 0 != start {
-				let trimmed_len = self.len() - start;
-				self.copy_within(start.., 0);
-				self.truncate(trimmed_len);
-			}
+		let slice: &[u8] = self.as_slice();
+		let before = slice.len();
+		let after = slice.trim_ascii_start().len();
+		if after < before {
+			if after != 0 { self.copy_within(before - after.., 0); }
+			self.truncate(after);
 		}
-		else { self.truncate(0); }
 	}
 
 	#[inline]
@@ -448,8 +449,8 @@ impl TrimMut for Vec<u8> {
 	/// assert_eq!(v, b" Hello World!");
 	/// ```
 	fn trim_end_mut(&mut self) {
-		let end = self.iter().rposition(not_whitespace).map_or(0, |e| e + 1);
-		self.truncate(end);
+		let trimmed_len = self.trim_ascii_end().len();
+		self.truncate(trimmed_len);
 	}
 }
 
@@ -479,6 +480,7 @@ impl TrimMatchesMut for Vec<u8> {
 		self.trim_start_matches_mut(pat);
 	}
 
+	#[inline]
 	/// # Trim Start Matches Mut.
 	///
 	/// Trim arbitrary leading bytes as determined by the provided
@@ -508,6 +510,7 @@ impl TrimMatchesMut for Vec<u8> {
 		else { self.truncate(0); }
 	}
 
+	#[inline]
 	/// # Trim End Matches Mut.
 	///
 	/// Trim arbitrary trailing bytes as determined by the provided
