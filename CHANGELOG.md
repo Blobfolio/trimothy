@@ -2,7 +2,7 @@
 
 
 
-## [0.5.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.5.0) - TBD
+## [0.5.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.5.0) - 2024-11-19
 
 ### New
 
