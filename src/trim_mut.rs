@@ -3,6 +3,7 @@
 */
 
 use alloc::{
+	borrow::Cow,
 	boxed::Box,
 	string::String,
 	vec::Vec,
@@ -246,6 +247,222 @@ impl TrimMatchesMut for String {
 	fn trim_end_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
 		let trimmed_len = self.trim_end_matches(#[inline(always)] |c| pat.is_match(c)).len();
 		self.truncate(trimmed_len);
+	}
+}
+
+
+
+impl<'a> TrimMut for Cow<'a, str> {
+	#[inline]
+	/// # Trim Mut.
+	///
+	/// Remove leading and trailing whitespace, mutably, preserving the `Cow`
+	/// variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_mut();
+	/// assert_eq!(s.as_ref(), "Hello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_mut();
+	/// assert_eq!(s.as_ref(), "Hello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim()); },
+			Cow::Owned(s) => { s.trim_mut(); },
+		}
+	}
+
+	#[inline]
+	/// # Trim Start Mut.
+	///
+	/// Remove leading whitespace, mutably, preserving the `Cow` variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_start_mut();
+	/// assert_eq!(s.as_ref(), "Hello World! ");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_start_mut();
+	/// assert_eq!(s.as_ref(), "Hello World! ");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_start_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim_start()); },
+			Cow::Owned(s) => { s.trim_start_mut(); },
+		}
+	}
+
+	#[inline]
+	/// # Trim End Mut.
+	///
+	/// Remove trailing whitespace, mutably, preserving the `Cow` variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_end_mut();
+	/// assert_eq!(s.as_ref(), " Hello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_end_mut();
+	/// assert_eq!(s.as_ref(), " Hello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_end_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim_end()); },
+			Cow::Owned(s) => { s.trim_end_mut(); },
+		}
+	}
+}
+
+impl<'a> TrimMatchesMut for Cow<'a, str> {
+	type MatchUnit = char;
+
+	#[inline]
+	/// # Trim Matches Mut.
+	///
+	/// Trim arbitrary leading and trailing chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_matches_mut([' ', 'H']);
+	/// assert_eq!(s.as_ref(), "ello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_matches_mut([' ', 'H']);
+	/// assert_eq!(s.as_ref(), "ello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_matches(#[inline(always)] |c| pat.is_match(c)));
+			},
+			Cow::Owned(s) => { s.trim_matches_mut(pat); },
+		}
+	}
+
+	#[inline]
+	/// # Trim Start Matches Mut.
+	///
+	/// Trim arbitrary leading chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_start_matches_mut([' ', 'H']);
+	/// assert_eq!(s.as_ref(), "ello World! ");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_start_matches_mut([' ', 'H']);
+	/// assert_eq!(s.as_ref(), "ello World! ");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_start_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_start_matches(#[inline(always)] |c| pat.is_match(c)));
+			},
+			Cow::Owned(s) => { s.trim_start_matches_mut(pat); },
+		}
+	}
+
+	#[inline]
+	/// # Trim End Matches Mut.
+	///
+	/// Trim arbitrary trailing chars as determined by the provided
+	/// pattern, which can be:
+	/// * A single `char`;
+	/// * An array or slice of `char`;
+	/// * A `&BTreeSet<char>`;
+	/// * A callback with the signature `Fn(char) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<str> = Cow::Borrowed(" Hello World! ");
+	/// s.trim_end_matches_mut([' ', '!', 'd', 'l']);
+	/// assert_eq!(s.as_ref(), " Hello Wor");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<str> = Cow::Owned(String::from(" Hello World! "));
+	/// s.trim_end_matches_mut([' ', '!', 'd', 'l']);
+	/// assert_eq!(s.as_ref(), " Hello Wor");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_end_matches_mut<P: MatchPattern<char>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_end_matches(#[inline(always)] |c| pat.is_match(c)));
+			},
+			Cow::Owned(s) => { s.trim_end_matches_mut(pat); },
+		}
 	}
 }
 

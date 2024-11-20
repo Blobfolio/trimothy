@@ -2,6 +2,15 @@
 
 
 
+## [0.6.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.0) - TBD
+
+### New
+
+* impl `TrimMut` for `Cow<str>`
+* impl `TrimMatchesMut` for `Cow<str>`
+
+
+
 ## [0.5.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.5.0) - 2024-11-19
 
 ### New
