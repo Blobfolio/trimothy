@@ -757,6 +757,222 @@ impl TrimMatchesMut for Vec<u8> {
 
 
 
+impl<'a> TrimMut for Cow<'a, [u8]> {
+	#[inline]
+	/// # Trim Mut.
+	///
+	/// Remove leading and trailing whitespace, mutably, preserving the `Cow`
+	/// variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_mut();
+	/// assert_eq!(s.as_ref(), b"Hello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_mut();
+	/// assert_eq!(s.as_ref(), b"Hello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim_ascii()); },
+			Cow::Owned(s) => { s.trim_mut(); },
+		}
+	}
+
+	#[inline]
+	/// # Trim Start Mut.
+	///
+	/// Remove leading whitespace, mutably, preserving the `Cow` variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_start_mut();
+	/// assert_eq!(s.as_ref(), b"Hello World! ");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_start_mut();
+	/// assert_eq!(s.as_ref(), b"Hello World! ");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_start_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim_ascii_start()); },
+			Cow::Owned(s) => { s.trim_start_mut(); },
+		}
+	}
+
+	#[inline]
+	/// # Trim End Mut.
+	///
+	/// Remove trailing whitespace, mutably, preserving the `Cow` variant.
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_end_mut();
+	/// assert_eq!(s.as_ref(), b" Hello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_end_mut();
+	/// assert_eq!(s.as_ref(), b" Hello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_end_mut(&mut self) {
+		match self {
+			Cow::Borrowed(s) => { *self = Cow::Borrowed(s.trim_ascii_end()); },
+			Cow::Owned(s) => { s.trim_end_mut(); },
+		}
+	}
+}
+
+impl<'a> TrimMatchesMut for Cow<'a, [u8]> {
+	type MatchUnit = u8;
+
+	#[inline]
+	/// # Trim Matches Mut.
+	///
+	/// Trim arbitrary leading and trailing bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_matches_mut([b' ', b'H']);
+	/// assert_eq!(s.as_ref(), b"ello World!");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_matches_mut([b' ', b'H']);
+	/// assert_eq!(s.as_ref(), b"ello World!");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_matches(pat));
+			},
+			Cow::Owned(s) => { s.trim_matches_mut(pat); },
+		}
+	}
+
+	#[inline]
+	/// # Trim Start Matches Mut.
+	///
+	/// Trim arbitrary leading bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_start_matches_mut([b' ', b'H']);
+	/// assert_eq!(s.as_ref(), b"ello World! ");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_start_matches_mut([b' ', b'H']);
+	/// assert_eq!(s.as_ref(), b"ello World! ");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_start_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_start_matches(pat));
+			},
+			Cow::Owned(s) => { s.trim_start_matches_mut(pat); },
+		}
+	}
+
+	#[inline]
+	/// # Trim End Matches Mut.
+	///
+	/// Trim arbitrary trailing bytes as determined by the provided
+	/// pattern, which can be:
+	/// * A single `u8`;
+	/// * An array or slice of `u8`;
+	/// * A `&BTreeSet<u8>`;
+	/// * A callback with the signature `Fn(u8) -> bool`;
+	///
+	/// ## Examples
+	///
+	/// ```
+	/// # extern crate alloc;
+	/// # use alloc::borrow::Cow;
+	/// use trimothy::TrimMatchesMut;
+	///
+	/// // Borrowed in, borrowed out.
+	/// let mut s: Cow<[u8]> = Cow::Borrowed(b" Hello World! ");
+	/// s.trim_end_matches_mut([b' ', b'!', b'd', b'l']);
+	/// assert_eq!(s.as_ref(), b" Hello Wor");
+	/// assert!(matches!(s, Cow::Borrowed(_)));
+	///
+	/// // Owned in, owned out.
+	/// let mut s: Cow<[u8]> = Cow::Owned(b" Hello World! ".to_vec());
+	/// s.trim_end_matches_mut([b' ', b'!', b'd', b'l']);
+	/// assert_eq!(s.as_ref(), b" Hello Wor");
+	/// assert!(matches!(s, Cow::Owned(_)));
+	/// ```
+	fn trim_end_matches_mut<P: MatchPattern<u8>>(&mut self, pat: P) {
+		match self {
+			Cow::Borrowed(s) => {
+				*self = Cow::Borrowed(s.trim_end_matches(pat));
+			},
+			Cow::Owned(s) => { s.trim_end_matches_mut(pat); },
+		}
+	}
+}
+
+
+
 #[cfg(test)]
 mod tests {
 	use super::*;

@@ -8,6 +8,8 @@
 
 * impl `TrimMut` for `Cow<str>`
 * impl `TrimMatchesMut` for `Cow<str>`
+* impl `TrimMut` for `Cow<[u8]>`
+* impl `TrimMatchesMut` for `Cow<[u8]>`
 
 
 
