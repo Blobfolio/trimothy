@@ -252,7 +252,7 @@ impl TrimMatchesMut for String {
 
 
 
-impl<'a> TrimMut for Cow<'a, str> {
+impl TrimMut for Cow<'_, str> {
 	#[inline]
 	/// # Trim Mut.
 	///
@@ -348,7 +348,7 @@ impl<'a> TrimMut for Cow<'a, str> {
 	}
 }
 
-impl<'a> TrimMatchesMut for Cow<'a, str> {
+impl TrimMatchesMut for Cow<'_, str> {
 	type MatchUnit = char;
 
 	#[inline]
@@ -757,7 +757,7 @@ impl TrimMatchesMut for Vec<u8> {
 
 
 
-impl<'a> TrimMut for Cow<'a, [u8]> {
+impl TrimMut for Cow<'_, [u8]> {
 	#[inline]
 	/// # Trim Mut.
 	///
@@ -853,7 +853,7 @@ impl<'a> TrimMut for Cow<'a, [u8]> {
 	}
 }
 
-impl<'a> TrimMatchesMut for Cow<'a, [u8]> {
+impl TrimMatchesMut for Cow<'_, [u8]> {
 	type MatchUnit = u8;
 
 	#[inline]
