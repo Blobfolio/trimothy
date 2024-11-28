@@ -277,7 +277,7 @@ impl<'a> TrimNormal for &'a str {
 	}
 }
 
-impl<'a> TrimNormal for Cow<'a, str> {
+impl TrimNormal for Cow<'_, str> {
 	/// # Output Type.
 	type Normalized = Self;
 
@@ -308,7 +308,7 @@ impl<'a> TrimNormal for Cow<'a, str> {
 	}
 }
 
-impl<'a> TrimNormal for &'a mut String {
+impl TrimNormal for &mut String {
 	/// # Output Type.
 	type Normalized = Self;
 
@@ -539,7 +539,7 @@ impl<'a> TrimNormal for &'a [u8] {
 	}
 }
 
-impl<'a> TrimNormal for Cow<'a, [u8]> {
+impl TrimNormal for Cow<'_, [u8]> {
 	/// # Output Type.
 	type Normalized = Self;
 
@@ -571,7 +571,7 @@ impl<'a> TrimNormal for Cow<'a, [u8]> {
 	}
 }
 
-impl<'a> TrimNormal for &'a mut Vec<u8> {
+impl TrimNormal for &mut Vec<u8> {
 	/// # Output Type.
 	type Normalized = Self;
 
