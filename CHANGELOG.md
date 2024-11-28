@@ -2,7 +2,7 @@
 
 
 
-## [0.6.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.0) - TBD
+## [0.6.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.0) - 2024-11-28
 
 ### New
 
@@ -10,6 +10,11 @@
 * impl `TrimMatchesMut` for `Cow<str>`
 * impl `TrimMut` for `Cow<[u8]>`
 * impl `TrimMatchesMut` for `Cow<[u8]>`
+
+### Changed
+
+* Bump `brunch` to `0.7` (dev)
+* Miscellaneous code changes and lints
 
 
 
