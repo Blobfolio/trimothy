@@ -126,8 +126,6 @@ respectively.
 	unused_import_braces,
 )]
 
-#![expect(clippy::module_name_repetitions, reason = "Repetition is preferred.")]
-
 #![no_std]
 
 extern crate alloc;
