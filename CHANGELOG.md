@@ -2,11 +2,12 @@
 
 
 
-## [0.6.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.1) - TBD
+## [0.6.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.1) - 2025-01-09
 
 ### Changed
 
 * Bump `brunch` to `0.8` (dev)
+* Miscellaneous code changes and lints
 
 
 

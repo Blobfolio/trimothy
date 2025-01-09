@@ -1,6 +1,6 @@
 # Project Dependencies
     Package:   trimothy
-    Version:   0.6.0
-    Generated: 2024-11-28 19:02:22 UTC
+    Version:   0.6.1
+    Generated: 2025-01-09 17:50:52 UTC
 
 This project has no dependencies.
