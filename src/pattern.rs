@@ -114,7 +114,7 @@ mod test {
 	use super::*;
 
 	/// # Strip Method.
-	fn strip_b(b: u8) -> bool { b == b'b' }
+	const fn strip_b(b: u8) -> bool { b == b'b' }
 
 	#[test]
 	fn t_patterns() {

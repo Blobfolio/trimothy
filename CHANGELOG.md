@@ -2,12 +2,23 @@
 
 
 
+## [0.7.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.7.0) - 2025-02-25
+
+### Changed
+
+* Bump `brunch` to `0.9` (dev)
+* Bump MSRV to `1.85`
+* Bump Rust edition to `2024`
+* Miscellaneous code cleanup and lints
+
+
+
 ## [0.6.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.6.1) - 2025-01-09
 
 ### Changed
 
 * Bump `brunch` to `0.8` (dev)
-* Miscellaneous code changes and lints
+* Miscellaneous code cleanup and lints
 
 
 
@@ -23,7 +34,7 @@
 ### Changed
 
 * Bump `brunch` to `0.7` (dev)
-* Miscellaneous code changes and lints
+* Miscellaneous code cleanup and lints
 
 
 
