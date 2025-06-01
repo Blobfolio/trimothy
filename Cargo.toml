@@ -1,9 +1,9 @@
 [package]
 name = "trimothy"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Josh Stoik <josh@blobfolio.com>"]
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.87"
 description = "Traits for trimming slices, vecs, and strings."
 license = "WTFPL"
 repository = "https://github.com/Blobfolio/trimothy"
@@ -22,7 +22,7 @@ exclude = [
 name = "Trimothy"
 
 [dev-dependencies]
-brunch = "0.9.*"
+brunch = "0.10.*"
 
 [[bench]]
 name = "fn_trim_mut"

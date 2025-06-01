@@ -2,6 +2,16 @@
 
 
 
+## [0.8.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.8.0) - 2025-06-01
+
+### Changed
+
+* Bump `brunch` to `0.10` (dev)
+* Bump MSRV to `1.87`
+* Fix deps.rs badge (docs)
+
+
+
 ## [0.7.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.7.0) - 2025-02-25
 
 ### Changed
