@@ -2,6 +2,14 @@
 
 
 
+## [0.8.1](https://github.com/Blobfolio/trimothy/releases/tag/v0.8.1) - TBD
+
+### Changed
+
+* Miscellaneous code cleanup and lints
+
+
+
 ## [0.8.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.8.0) - 2025-06-01
 
 ### Changed
