@@ -2,6 +2,16 @@
 
 
 
+## [0.9.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.9.0) - 2025-06-26
+
+### Changed
+
+* Bump `brunch` to `0.11` (dev)
+* Bump MSRV to `1.88`
+* Miscellaneous code cleanup and lints
+
+
+
 ## [0.8.0](https://github.com/Blobfolio/trimothy/releases/tag/v0.8.0) - 2025-06-01
 
 ### Changed

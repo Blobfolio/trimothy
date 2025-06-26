@@ -172,6 +172,10 @@ macro_rules! iter {
 				(lower, upper.map(|n| n + lower))
 			}
 		}
+
+		impl<I: Iterator<Item=$ty> + ExactSizeIterator> ExactSizeIterator for TrimNormalIter<$ty, I> {}
+
+		impl<I: Iterator<Item=$ty> + core::iter::FusedIterator> core::iter::FusedIterator for TrimNormalIter<$ty, I> {}
 	);
 }
 
