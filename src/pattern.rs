@@ -69,7 +69,7 @@ impl<T: Copy + Eq + Ord + Sized> MatchPattern<T> for &[T; 2] {
 
 
 
-// Note: for some reason Rust things FN(T) conflicts with T, so we have to be
+// Note: for some reason Rust thinks FN(T) conflicts with T, so we have to be
 // specific. Haha.
 
 impl<F: Fn(u8) -> bool + Copy> MatchPattern<u8> for F {
