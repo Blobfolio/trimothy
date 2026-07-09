@@ -220,7 +220,7 @@ impl TrimMatchesMut for String {
 		if let Some(start) = self.find(#[inline(always)] |c| ! pat.is_match(c)) {
 			if start != 0 { self.replace_range(..start, ""); }
 		}
-		else { self.truncate(0); }
+		else { self.clear(); }
 	}
 
 	#[inline]
@@ -728,7 +728,7 @@ impl TrimMatchesMut for Vec<u8> {
 				self.truncate(trimmed_len);
 			}
 		}
-		else { self.truncate(0); }
+		else { self.clear(); }
 	}
 
 	#[inline]
